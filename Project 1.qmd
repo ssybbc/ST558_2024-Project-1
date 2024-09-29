@@ -1,0 +1,38 @@
+---
+title: "ST558-Project 1"
+author: "Siyuan Su"
+format: html
+editor: visual
+---
+
+Census data is of a great interest of statisticians, but it could be challanging to get data from API. Let's first try the example call:
+
+```{r}
+URL_ids_trial <- "http://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"
+PUMS_trial <- httr::GET(URL_ids_trial)
+str (PUMS_trial, max.level = 2)
+str (PUMS_trial$content, max.level = 1)
+library (jsonlite)
+PUMS_trial_parsed <- fromJSON(rawToChar(PUMS_trial$content))
+```
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
