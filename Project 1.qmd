@@ -14,6 +14,25 @@ str (PUMS_trial, max.level = 2)
 str (PUMS_trial$content, max.level = 1)
 library (jsonlite)
 PUMS_trial_parsed <- fromJSON(rawToChar(PUMS_trial$content))
+str (PUMS_trial_parsed)
+```
+
+```{r}
+library(httr)
+
+# Base URL
+base_url <- "https://api.census.gov/data/2022/acs/acs1/pums"
+
+# Query parameters (correct structure)
+query_params <- list(
+  get = "SEX,PWGTP,MAR",   # Fields to retrieve
+  SCHL = "24",             # Filter
+  key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"  # API key
+)
+
+# Perform the GET request
+PUMS_trial <- httr::GET(url = base_url, query = query_params)
+
 ```
 
 ## Quarto
