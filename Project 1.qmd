@@ -8,50 +8,59 @@ editor: visual
 Census data is of a great interest of statisticians, but it could be challanging to get data from API. Let's first try the example call:
 
 ```{r}
-URL_ids_trial <- "http://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"
-PUMS_trial <- httr::GET(URL_ids_trial)
-str (PUMS_trial, max.level = 2)
-str (PUMS_trial$content, max.level = 1)
+library (dplyr)
 library (jsonlite)
-PUMS_trial_parsed <- fromJSON(rawToChar(PUMS_trial$content))
-str (PUMS_trial_parsed)
 ```
 
 ```{r}
-library(httr)
-
-# Base URL
-base_url <- "https://api.census.gov/data/2022/acs/acs1/pums"
-
-# Query parameters (correct structure)
+base_url_trial <- "https://api.census.gov/data/2022/acs/acs1/pums"
 query_params <- list(
   get = "SEX,PWGTP,MAR",   # Fields to retrieve
   SCHL = "24",             # Filter
   key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"  # API key
 )
-
-# Perform the GET request
 PUMS_trial <- httr::GET(url = base_url, query = query_params)
-
+PUMS_trial_parsed <- fromJSON(rawToChar(PUMS_trial$content))
+str (PUMS_trial_parsed)
 ```
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Then we turn the PUMS_trial into a tibble
 
 ```{r}
-1 + 1
+PUMS_trial_tibble <- as_tibble (PUMS_trial_parsed)
+head (PUMS_trial_tibble)
 ```
 
-You can add options to executable code like this
+Wow, that was successful. So the key was to put the conditions in the query argument in the function GET(). Now we are going to set out to construct a new function called getPUMS. https://api.census.gov/data/2022/acs/acs1/pums/variables.html Showed all the variable in the data set, which has 525 variables. It would be very hard to get all the variables, even just to a few lines of data. So we have to make clear of what variables to get in the very beginning of writing and adjusting the functions. They included: 
+
+Year of survey with default at 2022. That must have something to do with the URL we are inquiring. Let's stick to the variable settings in the trial and play with the year of survey first.
 
 ```{r}
-#| echo: false
-2 * 2
+getPUMS <- function (year = 2022) {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+  get = "SEX,PWGTP,MAR,AGEP",   
+  SCHL = "24",             
+  key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c") 
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  return (head (PUMScust_tibble))
+}
+getPUMS (2022)
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+It looks like worked. Let's see whether it worked on other years.
+
+```{r}
+getPUMS (2021)
+getPUMS (2019)
+```
+
+They all worked. I also noticed that there is if year=2020, will return an error. It turned out the ACS 1-Year PUMS data for the year 2020 was not included in the default path because of smaller-than-previous sample issue.
+
+
+ 
+ 
