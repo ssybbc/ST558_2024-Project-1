@@ -5,7 +5,9 @@ format: html
 editor: visual
 ---
 
-Census data is of a great interest of statisticians, but it could be challanging to get data from API. Let's first try the example call:
+# Introduction
+
+Census data is of a great interest of statisticians, but it could be challenging to get data from API. Let's first try the example call:
 
 ```{r}
 library (dplyr)
@@ -31,9 +33,15 @@ PUMS_trial_tibble <- as_tibble (PUMS_trial_parsed)
 head (PUMS_trial_tibble)
 ```
 
-Wow, that was successful. So the key was to put the conditions in the query argument in the function GET(). Now we are going to set out to construct a new function called getPUMS. https://api.census.gov/data/2022/acs/acs1/pums/variables.html Showed all the variable in the data set, which has 525 variables. It would be very hard to get all the variables, even just to a few lines of data. So we have to make clear of what variables to get in the very beginning of writing and adjusting the functions. They included: 
+Wow, that was successful. So the key was to put the conditions in the query argument in the function GET().
 
-Year of survey with default at 2022. That must have something to do with the URL we are inquiring. Let's stick to the variable settings in the trial and play with the year of survey first.
+# Data Processing
+
+Now we are going to set out to construct a new function called getPUMS. https://api.census.gov/data/2022/acs/acs1/pums/variables.html Showed all the variable in the data set, which has 525 variables. It would be very hard to get all the variables, even just to a few lines of data. So we have to make clear of what variables to get in the very beginning of writing and adjusting the functions. Let's first go with the original variables in the test sample and deal with the year issue.
+
+## Select functions enabling the selection of year.
+
+We wanted to customize a function that enable custom-selection of Year of survey with default at 2022. That must have something to do with the URL we are inquiring. Let's stick to the variable settings in the trial and play with the year of survey first.
 
 ```{r}
 getPUMS <- function (year = 2022) {
@@ -61,6 +69,115 @@ getPUMS (2019)
 
 They all worked. I also noticed that there is if year=2020, will return an error. It turned out the ACS 1-Year PUMS data for the year 2020 was not included in the default path because of smaller-than-previous sample issue.
 
+## Make a function that specifies the numeric values to be returned.
 
- 
- 
+Next we wanted to make a function that solely tells which numeric values to be returned. Default was AGEP and PWGTP, with several options being available.
+
+```{r}
+choosenum <- function (numvarinput) {
+  
+  numvar <- ifelse (numvarinput %in% c("AGEP", "GASP", "GRPIP", "JWAP", "JWMNP"),
+             c(numvarinput, "PWGTP"), 
+             "error: numeric variable must match with exisiting numeric variable names")
+  return (numvar)
+  
+}
+choosenum ("AGEP")
+```
+
+It is weird no matter what I input, the choosenum function always returns an one-element vector. It turns out this is the setting of ifelse syntax. Try if-else sentence instead.
+
+```{r}
+choosenum <- function (numvarinput) {
+  if (numvarinput %in% c("AGEP", "GASP", "GRPIP", "JWAP", "JWMNP"))
+  {numvar <- c (numvarinput, "PWGTP")}
+  else {numvar <- "Error"}
+  return (numvar)
+}
+choosenum ("GASP")
+```
+
+It retuns a string of two characters and takes both my input and another variant PWGTP. Now try "attaching" the new function with our main function getPUMS ()
+
+```{r}
+getPUMSv2 <- function (year = 2022, numvarinput = "AGEP") {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+  get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2]),
+                SCHL = "24",
+                key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c") 
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  return (head (PUMScust_tibble))
+}
+getPUMSv2(2022, "GASP")
+```
+
+What happens if I don't choose any numeric values?
+
+```{r}
+getPUMSv2(2022)
+```
+
+This is cool. This way ensures the numeric input must have a value. Now if you look closely at the objects returned by the getPUMSv2 function, these variables are all character variables. Make them numeric now!
+
+```{r}
+getPUMSv2.1 <- function (year = 2022, numvarinput) {  
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+  get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2]),
+                SCHL = "24",
+                key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c") 
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  PUMScust_tibble <- mutate (PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
+    return (head (PUMScust_tibble))
+}
+getPUMSv2.1(2022, "GASP")
+```
+
+Seemed to be very hard. Let's put it here for now and move on to the next topic.
+
+## Make a function that specifies the categorical variables to be returned.
+
+Similarly for catogorical variables, we wanted to make a function that solely tells which character values to be returned. Default was SEX, with several options being available.
+
+```{r}
+choosecat <- function (catvarinput) {
+  if (catvarinput %in% c("FER", "HHL", "HISPEED", "JWTRNS", "SCH", "SCHL", "SEX"))
+  {catvar <- catvarinput}
+  else {catvar <- "Error"}
+  return (catvar)
+}
+choosecat ("FER")
+```
+
+Now let's concatenate this sub function into the original function
+
+```{r}
+getPUMSv3 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX") {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput)),
+    SCHL = "24",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  return (head (PUMScust_tibble))
+}
+getPUMSv3(2022,"GASP","HHL")
+getPUMSv3(year=2022,numvarinput = "GASP")
+```
+
+Now except for the variables not being catorgorical but character, all other requirements are there.
+
+## Make a function to specify the geographical level
