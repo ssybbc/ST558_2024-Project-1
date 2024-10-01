@@ -212,12 +212,13 @@ getPUMSv4.0(2022,"GASP","HHL")
 For the ease of exercising, I directly input the level of geography in the previous function. Now we want to build a function to let user select geographic level as well as specify the region, division or state. Let's make a small function first.
 ```{r}
 choosegeolvl <- function (geolvlinput) {
-  if (geolvlinput %in% c("REGION", "DIVISION", "ST"))
+  if (geolvlinput %in% c("region", "division", "state"))
   {geolvlvar <- geolvlinput}
   else {geolvlvar <- "Error"}
   return (geolvlvar)
 }
-choosegeolvl ("ST")
+choosegeolvl ("state")
+choosegeolvl("division")
 ```
 
 Now that we have the function to specify geographic level we want to display, integrate in the main function
@@ -247,8 +248,8 @@ getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
   
   query_params <- list(
     get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
-    SCHL = "24",
-    state = "17",
+    ST = "09",
+    SCHL = "23",
     key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
   
   PUMScust <- httr::GET(url = base_url, query = query_params)
@@ -259,7 +260,28 @@ getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
 getPUMSv4.2(2022,"GASP","HHL","ST")
 ```
 
+It throws out an error. Looks like geographic-related variables could not be subsetted in the same way as other variables. But how to solve the 'for' problem? We figured out later a backtick (`) should be used to avoid confusion.
 
+```{r}
+getPUMSv4.3 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = "All", geospecinput) {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput)),
+    `for` = paste0 (choosegeolvl(geolvlinput),":",geospecinput),
+    SCHL = "24",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  return (PUMScust_tibble)
+}
+getPUMSv4.3(2022,"GASP","HHL","state","09")
+getPUMSv4.3(2022,"GASP","HHL","division","1")
+getPUMSv4.3(2022,"GASP","HHL","region","1")
+```
+```
 
 
 
