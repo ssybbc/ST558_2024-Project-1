@@ -21,7 +21,7 @@ query_params <- list(
   SCHL = "24",             # Filter
   key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"  # API key
 )
-PUMS_trial <- httr::GET(url = base_url, query = query_params)
+PUMS_trial <- httr::GET(url = base_url_trial, query = query_params)
 PUMS_trial_parsed <- fromJSON(rawToChar(PUMS_trial$content))
 str (PUMS_trial_parsed)
 ```
@@ -184,11 +184,7 @@ Now except for the variables not being catorgorical but character, all other req
 
 We are interested in getting data with specific geographic levels and wanted to also specify the geographic items we are interested in (a specific region, district or state(s)). Checking the examples provided by the US census on the example URLs (https://api.census.gov/data/2022/acs/acs1/pums/examples.html):
 
-Default call:
-https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=YOUR_KEY_GOES_HERE
-To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:*&SCHL=24&key=YOUR_KEY_GOES_HERE.
-To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:*&SCHL=24&key=YOUR_KEY_GOES_HERE 
-To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=state:*&SCHL=24&key=YOUR_KEY_GOES_HERE
+Default call: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=YOUR_KEY_GOES_HERE To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:*&SCHL=24&key=YOUR_KEY_GOES_HERE. To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:*&SCHL=24&key=YOUR_KEY_GOES_HERE To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=state:\*&SCHL=24&key=YOUR_KEY_GOES_HERE
 
 It is easy to see the parameter here need to deal with is "for=XXX", which is included in the argument "query" in the function GET(). Thus we could let the new function specify this part. But after playing with it for a while we figured out in the query_params, geographic option should be included in the "get=" argument instead of "for=" argument because in R for is designated for the loop.
 
@@ -210,6 +206,7 @@ getPUMSv4.0(2022,"GASP","HHL")
 ```
 
 For the ease of exercising, I directly input the level of geography in the previous function. Now we want to build a function to let user select geographic level as well as specify the region, division or state. Let's make a small function first.
+
 ```{r}
 choosegeolvl <- function (geolvlinput) {
   if (geolvlinput %in% c("region", "division", "state"))
@@ -260,7 +257,7 @@ getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
 getPUMSv4.2(2022,"GASP","HHL","ST")
 ```
 
-It throws out an error. Looks like geographic-related variables could not be subsetted in the same way as other variables. But how to solve the 'for' problem? We figured out later a backtick (`) should be used to avoid confusion.
+It throws out an error. Looks like geographic-related variables could not be subsetted in the same way as other variables. But how to solve the 'for' problem? We figured out later a backtick (\`) should be used to avoid confusion.
 
 ```{r}
 getPUMSv4.3 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = "All", geospecinput) {
@@ -281,8 +278,5 @@ getPUMSv4.3(2022,"GASP","HHL","state","09")
 getPUMSv4.3(2022,"GASP","HHL","division","1")
 getPUMSv4.3(2022,"GASP","HHL","region","1")
 ```
-```
-
-
 
 
