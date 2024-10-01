@@ -181,3 +181,86 @@ getPUMSv3(year=2022,numvarinput = "GASP")
 Now except for the variables not being catorgorical but character, all other requirements are there.
 
 ## Make a function to specify the geographical level
+
+We are interested in getting data with specific geographic levels and wanted to also specify the geographic items we are interested in (a specific region, district or state(s)). Checking the examples provided by the US census on the example URLs (https://api.census.gov/data/2022/acs/acs1/pums/examples.html):
+
+Default call:
+https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=YOUR_KEY_GOES_HERE
+To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:*&SCHL=24&key=YOUR_KEY_GOES_HERE.
+To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:*&SCHL=24&key=YOUR_KEY_GOES_HERE 
+To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=state:*&SCHL=24&key=YOUR_KEY_GOES_HERE
+
+It is easy to see the parameter here need to deal with is "for=XXX", which is included in the argument "query" in the function GET(). Thus we could let the new function specify this part. But after playing with it for a while we figured out in the query_params, geographic option should be included in the "get=" argument instead of "for=" argument because in R for is designated for the loop.
+
+```{r}
+getPUMSv4.0 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX") {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",","REGION",",","ST",",","DIVISION"),
+    SCHL = "24",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  return (head (PUMScust_tibble))
+}
+getPUMSv4.0(2022,"GASP","HHL")
+```
+
+For the ease of exercising, I directly input the level of geography in the previous function. Now we want to build a function to let user select geographic level as well as specify the region, division or state. Let's make a small function first.
+```{r}
+choosegeolvl <- function (geolvlinput) {
+  if (geolvlinput %in% c("REGION", "DIVISION", "ST"))
+  {geolvlvar <- geolvlinput}
+  else {geolvlvar <- "Error"}
+  return (geolvlvar)
+}
+choosegeolvl ("ST")
+```
+
+Now that we have the function to specify geographic level we want to display, integrate in the main function
+
+```{r}
+getPUMSv4.1 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = "All") {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
+    SCHL = "24",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  return (head (PUMScust_tibble))
+}
+getPUMSv4.1(2022,"GASP","HHL","ST")
+```
+
+Now let's enable an option to allow user to subset the data based on geographic information, and it must be on API. Considering the argument of query is essentially a list, which specifies "SCHL = "24"", we could try specify here as well.
+
+```{r}
+getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = "All") {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+  query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
+    SCHL = "24",
+    state = "17",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  return (head (PUMScust_tibble))
+}
+getPUMSv4.2(2022,"GASP","HHL","ST")
+```
+
+
+
+
+
+
