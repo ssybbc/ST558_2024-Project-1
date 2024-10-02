@@ -164,7 +164,7 @@ getPUMSv2.1b(2022, "GASP")
 
 ```
 
-Issue fixed
+Issue fixed; updated as follows. Function is getPUMSv2.1c
 
 ```{r}
 # WT: issue related to mutate() is fixed. Function is getPUMSv2.1c
@@ -197,7 +197,7 @@ Now, move on to the next topic.
 
 ## Make a function that specifies the categorical variables to be returned.
 
-Similarly for categorical variables, we wanted to make a function that solely tells which character values to be returned. Default was SEX, with several options being available.
+Similarly, for categorical variables, we wanted to make a function that solely tells which character values to be returned. Default was SEX, with several options being available.
 
 ```{r}
 choosecat <- function (catvarinput= "SEX") {
@@ -208,6 +208,8 @@ choosecat <- function (catvarinput= "SEX") {
 }
 choosecat ("FER")
 ```
+
+Above code was modified as follows. Function is choosecatv2
 
 ```{r}
 # WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions
@@ -232,12 +234,11 @@ choosecatv2 <- function (catvarinput = "SEX"){
      
   }
   
-# calling the following function and return the details for the categorical variable
+# calling the following function will return the details for the categorical variable
 choosecatv2("HHL")
 choosecatv2("SCHL")
 
 ```
-
 
 Now let's concatenate this sub function into the original function
 
@@ -257,9 +258,42 @@ getPUMSv3 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX") {
 }
 getPUMSv3(2022,"GASP","HHL")
 getPUMSv3(year=2022,numvarinput = "GASP")
+
 ```
 
 Now except for the variables not being categorical but character, all other requirements are there.
+
+WT: The above function is being updated as follows. Function is getPUMSv3b
+
+```{r}
+# The function getPUMSv3 is modified as getPUMSv3b, as follows. Issues related to first row data and converting variable to categorical variable are addressed (SCHL = "24" was removed; did not see this requirement in the instructions. But then being added back - too long runtime)
+getPUMSv3b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX") {
+  base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput)),
+    SCHL = "24",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  colnames(PUMScust_tibble) <- as.character(unlist(PUMScust_tibble[1,]))
+  PUMScust_tibble <- PUMScust_tibble[-1, ]
+  PUMScust_tibble <- mutate(PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
+  
+  # directly change the column vector to 'factor' type without adding a column to the dataset
+  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
+  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
+  
+  return (head(PUMScust_tibble))
+  
+}
+getPUMSv3b(2022,"GASP","HHL")
+
+```
+
+
+
 
 ## Make a function to specify the geographical level
 
