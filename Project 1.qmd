@@ -193,7 +193,6 @@ getPUMSv2.1c(2022, "GASP")
 
 ```
 
-
 Now, move on to the next topic.
 
 ## Make a function that specifies the categorical variables to be returned.
@@ -201,7 +200,7 @@ Now, move on to the next topic.
 Similarly for categorical variables, we wanted to make a function that solely tells which character values to be returned. Default was SEX, with several options being available.
 
 ```{r}
-choosecat <- function (catvarinput) {
+choosecat <- function (catvarinput= "SEX") {
   if (catvarinput %in% c("FER", "HHL", "HISPEED", "JWTRNS", "SCH", "SCHL", "SEX"))
   {catvar <- catvarinput}
   else {catvar <- "Error"}
@@ -209,6 +208,36 @@ choosecat <- function (catvarinput) {
 }
 choosecat ("FER")
 ```
+
+```{r}
+# WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions
+choosecatv2 <- function (catvarinput = "SEX"){
+  if (catvarinput %in% c("FER", "HHL", "HISPEED", "JWTRNS", "SCH", "SCHL", "SEX")){
+    catvar <- switch(catvarinput,
+        "SEX" = factor(c(1, 2), levels = c(1, 2), labels = c("Male", "Female")),
+        "FER" = factor(c(1, 2), levels = c(1, 2), labels = c("Has given birth", "Has not given birth")),
+        "HHL" = factor(c(1, 2, 3, 4, 5), levels = c(1, 2, 3, 4, 5),
+                labels = c("English only", "Spanish", "Other Indo-European languages", "Asian/Pacific Island languages", "Other language")),
+        "HISPEED" = factor(c(1, 2), levels = c(1, 2), labels = c("Yes", "No")),
+        "JWTRNS" = factor(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), 
+               levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+               labels = c("Car, truck, or van", "Bus", "Subway or elevated rail", "Long-distance train or commuter rail", "Light rail, streetcar, or trolley", "Ferryboat", "Taxicab", "Motorcycle", "Bicycle", "Walked", "Worked from home", "Other method")),
+        "SCH" = factor(c(1, 2, 3), levels = c(1, 2, 3), labels = c("No, has not attended in the last 3 months", "Yes, public school or public college", "Yes, private school or college or home school")),
+        "SCHL" = factor(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24), levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24), labels = c("No schooling completed", "Nursery school, preschool", "Kindergarten", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "12th grade - no diploma", "Regular high school diploma", "GED or alternative credential", "Some college, but less than 1 year", "1 or more years of college credit, no degree", "Associate's degree", "Bachelor's degree", "Master's degree", "Professional degree beyond a bachelor's degree", "Doctorate degree"))  
+    )
+  } else {
+     catvar <- "Error: Invalid input variable"
+  }
+  return(catvar)
+     
+  }
+  
+# calling the following function and return the details for the categorical variable
+choosecatv2("HHL")
+choosecatv2("SCHL")
+
+```
+
 
 Now let's concatenate this sub function into the original function
 
