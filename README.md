@@ -7,3 +7,4 @@ Class 'census' is assigned to tibble
 
 Completed the 'Summary' function following instructions on page 4
 
+Completed the 'Plot' function on page 5

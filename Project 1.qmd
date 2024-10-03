@@ -614,7 +614,7 @@ PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24
 
 ```
 
-Below: A function "summary.census" that produces means and standard deviations for numeric variables and counts for categorical variables
+Below is a function "summary.census" that produces means and standard deviations for numeric variables and counts for categorical variables
 ```{r}
 # This function will use the output of getPUMSsum function as one of the argument, and summarize weighted mean, std. dev, and the count
 summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
@@ -654,7 +654,20 @@ summary_stat
 ```
 
 
+Next, create a generic plot() function for a census class tibble
+```{r}
+# This code chunk creates a generic plot() function for a census class tibble, with three arguments. 
+library(ggplot2)
 
+plot.census <- function(tibble_data, cat_var, num_var){
+  plot <- ggplot((tibble_data), aes(x = get(cat_var), y = get(num_var), weight = PWGTP_n)) + geom_boxplot() +
+  labs(title = paste("Plot of", num_var, "by", cat_var)) + xlab(cat_var) + ylab(num_var)
+  print(plot)
+}
+
+# call the function and return a plot
+plot.census(PUMS_tibble_census, "HHL", "GASP")
+```
 
 
 
