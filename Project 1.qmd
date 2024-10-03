@@ -569,15 +569,14 @@ getPUMSv4.4(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "S
 
 ```
 
-Class 'census' is assigned to tibble
+In this function "getPUMSsum", we get the class 'census' assigned to tibble at the end, so that the next function 'summary.census' will provide a method specifically for the census class.
 ```{r}
 # This function is updated to include 'census' class assigned to the tibble  
 getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
   
   # create an empty list
   multiple_years <- list()
-  
-  for (year in years) {
+    for (year in years) {
     
     base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
     
@@ -589,7 +588,6 @@ getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SE
   if (!is.null(filter_value) & !is.null(filter_column)) {
     query_params[[filter_column]] <- filter_value
   }
-  
   PUMScust <- httr::GET(url = base_url, query = query_params)
   PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
   PUMScust_tibble <- as_tibble (PUMScust_parsed)
@@ -597,16 +595,13 @@ getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SE
   PUMScust_tibble <- PUMScust_tibble[-1, ]
   # this is to add a column and change the value type to numeric
   PUMScust_tibble <- mutate(PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
-  
-  # change the column vector to 'factor' type without adding a column to the dataset
+  # change the column vector to 'factor' or 'numeric' type without adding a column to the dataset
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
     
   multiple_years[[as.character(year)]] <- PUMScust_tibble
   }  
-  
   allyeardata <- bind_rows(multiple_years)
-  
   current_classes <- class(allyeardata)
   class(allyeardata) <- c("census", current_classes)
   # we remove the 'head', so that the function returns a complete tibble dataset
@@ -614,10 +609,49 @@ getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SE
 }
 # following call works (takes long time)
 getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+# get the data and give it a name, which will be the first argument in the Function "summary.census"
+PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 
 ```
 
+Below: A function "summary.census" that produces means and standard deviations for numeric variables and counts for categorical variables
+```{r}
+# This function will use the output of getPUMSsum function as one of the argument, and summarize weighted mean, std. dev, and the count
+summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
+  # if numeric variable, then put it in a vector num_vars. We leave "PWGTP_n" out, it's the weighting info used in summary
+  if(is.null(num_vars)){
+    num_vars <- names(tibble_data)[sapply(tibble_data, is.numeric) & names(tibble_data) != "PWGTP_n" ]
+  }
+  # if categorical variable, then put it in a vector cat_vars
+  if(is.null(cat_vars)){
+    cat_vars <- names(tibble_data)[sapply(tibble_data, is.factor)]
+  }
+    result_list <- list()
+  weight_vector <- tibble_data$PWGTP_n
+  
+  for (num_var in num_vars){
+    numeric_vector <- tibble_data[[num_var]]
+  
+  # calculate sample mean for numeric variable
+  sample_mean <- sum(numeric_vector*weight_vector)/sum(weight_vector)
+    # calculate sample std dev for numeric variable
+  sample_stddev <- sqrt(sum(numeric_vector^2*weight_vector)/sum(weight_vector)-sample_mean^2)
+    # return the values as a named list
+  result_list[[paste0(num_var, "_mean")]] <- sample_mean
+  result_list[[paste0(num_var, "_sd")]] <- sample_stddev
+  
+  }
+  
+  for (cat_var in cat_vars){
+    cat_table <- table(tibble_data[[cat_var]])
+    result_list[[paste0(cat_var, "_counts")]] <- cat_table
+  }
+  return(result_list)
+}
 
+summary_stat <- summary.census(PUMS_tibble_census)
+summary_stat
+```
 
 
 
