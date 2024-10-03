@@ -292,7 +292,6 @@ getPUMSv3b(2022,"GASP","HHL")
 
 ```
 
-
 ## Make a function to specify the geographical level
 
 We are interested in getting data with specific geographic levels and wanted to also specify the geographic items we are interested in (a specific region, district or state(s)). Checking the examples provided by the US census on the example URLs (https://api.census.gov/data/2022/acs/acs1/pums/examples.html):
@@ -381,7 +380,7 @@ getPUMSv4.1 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
 getPUMSv4.1(2022,"GASP","HHL","ST")
 ```
 
-WT: updated the above code as follows. Function "getPUMSv4.1b" 
+WT: updated the above code as follows. Function "getPUMSv4.1b"
 
 ```{r}
 # WT: updated the code to "getPUMSv4.1b", but we did not see "All" in the variable list, only "region", "ST", ...
@@ -412,7 +411,6 @@ getPUMSv4.1b(2022,"GASP","HHL", "DIVISION")
 
 ```
 
-
 Now let's enable an option to allow user to subset the data based on geographic information, and it must be on API. Considering the argument of query is essentially a list, which specifies "SCHL ="24", we could try specify here as well.
 
 ```{r}
@@ -432,7 +430,6 @@ getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
 }
 getPUMSv4.2(2022,"GASP","HHL","ST")
 ```
-
 
 ```{r}
 # WT: updated the above function as follows. Function "getPUMSv4.2b", still can't set geolvlinput default as ALL. This code does not work for geography level filtering
@@ -470,7 +467,6 @@ getPUMSv4.2b(2022,"GASP","HHL","ST", filter_value = "20", filter_column = "SCHL"
 getPUMSv4.2b(2022,"GASP","HHL","ST", filter_value = "32", filter_column = "ST")
 
 ```
-
 
 It throws out an error. Looks like geographic-related variables could not be subsetted in the same way as other variables. But how to solve the 'for' problem? We figured out later a backtick (\`) should be used to avoid confusion.
 
@@ -556,7 +552,7 @@ getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "S
   # this is to add a column and change the value type to numeric
   PUMScust_tibble <- mutate(PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
   
-  # directly change the column vector to 'factor' type without adding a column to the dataset
+  # change the column vector to 'factor' type without adding a column to the dataset
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
     
@@ -565,12 +561,70 @@ getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "S
   
   allyeardata <- bind_rows(multiple_years)
   
-  return(head(allyeardata))
+  # we remove the 'head', so that the function returns a complete tibble dataset
+  return(allyeardata)
 }
-# following call works
-getPUMSv4.4(c(2021,2022),"GASP","HHL","ST",filter_value="20", filter_column = "SCHL" )
+# following call works (takes long time)
+getPUMSv4.4(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 
 ```
+
+Class 'census' is assigned to tibble
+```{r}
+# This function is updated to include 'census' class assigned to the tibble  
+getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
+  
+  # create an empty list
+  multiple_years <- list()
+  
+  for (year in years) {
+    
+    base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+    
+    query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
+    
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  # optional filtering
+  if (!is.null(filter_value) & !is.null(filter_column)) {
+    query_params[[filter_column]] <- filter_value
+  }
+  
+  PUMScust <- httr::GET(url = base_url, query = query_params)
+  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
+  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  colnames(PUMScust_tibble) <- as.character(unlist(PUMScust_tibble[1,]))
+  PUMScust_tibble <- PUMScust_tibble[-1, ]
+  # this is to add a column and change the value type to numeric
+  PUMScust_tibble <- mutate(PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
+  
+  # change the column vector to 'factor' type without adding a column to the dataset
+  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
+  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
+    
+  multiple_years[[as.character(year)]] <- PUMScust_tibble
+  }  
+  
+  allyeardata <- bind_rows(multiple_years)
+  
+  current_classes <- class(allyeardata)
+  class(allyeardata) <- c("census", current_classes)
+  # we remove the 'head', so that the function returns a complete tibble dataset
+  return(allyeardata)
+}
+# following call works (takes long time)
+getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+
+```
+
+
+
+
+
+
+
+
+
 
 
 

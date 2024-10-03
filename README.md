@@ -2,3 +2,5 @@
 
 
 completed all steps on page 3.
+
+Class 'census' is assigned to tibble
