@@ -3,8 +3,10 @@
 
 Completed all steps on page 3.
 
-Class 'census' is assigned to tibble
+Class 'census' is assigned to tibble.
 
-Completed the 'Summary' function following instructions on page 4
+Completed the 'Summary' function following instructions on page 4.
 
-Completed the 'Plot' function on page 5
+Completed the 'Plot' function on page 5.
+
+Included on question to investigate per instruction page 5.

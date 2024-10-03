@@ -164,10 +164,10 @@ getPUMSv2.1b(2022, "GASP")
 
 ```
 
-Issue fixed; updated as follows. Function is getPUMSv2.1c
+We fixed the issue in the below updated function getPUMSv2.1c
 
 ```{r}
-# WT: issue related to mutate() is fixed. Function is getPUMSv2.1c
+# WT: issue related to mutate() is fixed. Column names are good. Function is getPUMSv2.1c
 getPUMSv2.1c <- function(year = 2022, numvarinput = "AGEP"){
   base_url <- paste0("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
   query_params <- list(
@@ -209,7 +209,7 @@ choosecat <- function (catvarinput= "SEX") {
 choosecat ("FER")
 ```
 
-Above code was modified as follows. Function is choosecatv2
+We updated the above code as follows. Function is choosecatv2
 
 ```{r}
 # WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions
@@ -263,7 +263,7 @@ getPUMSv3(year=2022,numvarinput = "GASP")
 
 Now except for the variables not being categorical but character, all other requirements are there.
 
-WT: The above function is being updated as follows. Function is getPUMSv3b
+Update: We modified the above function as follows. Changed column vector to 'factor' type for categorical variables. Function is getPUMSv3b
 
 ```{r}
 # The function getPUMSv3 is modified as getPUMSv3b, as follows. Issues related to first row data and converting variable to categorical variable are addressed (SCHL = "24" was removed; did not see this requirement in the instructions. But then being added back - too long runtime)
@@ -317,7 +317,7 @@ getPUMSv4.0 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX")
 getPUMSv4.0(2022,"GASP","HHL")
 ```
 
-WT: above code was updated as follows. Function getPUMSv4.0b
+We updated the above code as follows. Function getPUMSv4.0b
 
 ```{r}
 # WT: updates are mainly for address the data type converting
@@ -380,7 +380,7 @@ getPUMSv4.1 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
 getPUMSv4.1(2022,"GASP","HHL","ST")
 ```
 
-WT: updated the above code as follows. Function "getPUMSv4.1b"
+WT: Updated the above code as follows. Function "getPUMSv4.1b"
 
 ```{r}
 # WT: updated the code to "getPUMSv4.1b", but we did not see "All" in the variable list, only "region", "ST", ...
@@ -431,6 +431,8 @@ getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
 getPUMSv4.2(2022,"GASP","HHL","ST")
 ```
 
+
+The column name issue is address in the following code "getPUMSv4.2b"
 ```{r}
 # WT: updated the above function as follows. Function "getPUMSv4.2b", still can't set geolvlinput default as ALL. This code does not work for geography level filtering
 getPUMSv4.2b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
@@ -463,7 +465,7 @@ getPUMSv4.2b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX"
 
 # following call works
 getPUMSv4.2b(2022,"GASP","HHL","ST", filter_value = "20", filter_column = "SCHL")
-# following not working
+# following call not working
 getPUMSv4.2b(2022,"GASP","HHL","ST", filter_value = "32", filter_column = "ST")
 
 ```
@@ -490,7 +492,7 @@ getPUMSv4.3(2022,"GASP","HHL","division","1")
 getPUMSv4.3(2022,"GASP","HHL","region","1")
 ```
 
-Code above.. try one more time... Function "getPUMSv4.3b"
+Try one more time... Function "getPUMSv4.3b"
 
 ```{r}
 # WT: updated the above function as follows. Function "getPUMSv4.3b", still can't set geolvlinput default as ALL. Not working
@@ -569,7 +571,8 @@ getPUMSv4.4(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "S
 
 ```
 
-In this function "getPUMSsum", we get the class 'census' assigned to tibble at the end, so that the next function 'summary.census' will provide a method specifically for the census class.
+In the function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'.
+
 ```{r}
 # This function is updated to include 'census' class assigned to the tibble  
 getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
@@ -615,6 +618,7 @@ PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24
 ```
 
 Below is a function "summary.census" that produces means and standard deviations for numeric variables and counts for categorical variables
+
 ```{r}
 # This function will use the output of getPUMSsum function as one of the argument, and summarize weighted mean, std. dev, and the count
 summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
@@ -653,8 +657,8 @@ summary_stat <- summary.census(PUMS_tibble_census)
 summary_stat
 ```
 
+Next, We create a generic plot() function for a census class tibble
 
-Next, create a generic plot() function for a census class tibble
 ```{r}
 # This code chunk creates a generic plot() function for a census class tibble, with three arguments. 
 library(ggplot2)
@@ -669,10 +673,21 @@ plot.census <- function(tibble_data, cat_var, num_var){
 plot.census(PUMS_tibble_census, "HHL", "GASP")
 ```
 
+## Interesting topics to investigate using the census data and the API and summary functions.
 
+Topic - How does gross rent as a % of household income vary among different language speaking families?
+(We were more interested in finding income distribution among different attributes. However, the GRPIP is not one of the user options and this variable seems not working in API function. Will revisit)
 
+```{r}
+PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GRPIP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+PUMS_tibble_census
+# obtain the summary statistics
+summary_stat <- summary.census(PUMS_tibble_census)
+summary_stat
+# plot
+plot.census(PUMS_tibble_census, "HHL", "GRPIP")
 
-
+```
 
 
 
