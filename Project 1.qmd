@@ -1,6 +1,6 @@
 ---
 title: "ST558-Project 1"
-author: "Siyuan Su"
+author: "Siyuan Su" "Wenye Tang"
 format: html
 editor: visual
 ---
@@ -164,7 +164,7 @@ getPUMSv2.1b(2022, "GASP")
 
 ```
 
-We fixed the issue in the below updated function getPUMSv2.1c
+We fixed the issue of column names in the below updated function getPUMSv2.1c
 
 ```{r}
 # WT: issue related to mutate() is fixed. Column names are good. Function is getPUMSv2.1c
@@ -617,7 +617,7 @@ PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24
 
 ```
 
-Below is a function "summary.census" that produces means and standard deviations for numeric variables and counts for categorical variables
+We developed a function "summary.census" below that produces means and standard deviations for numeric variables and counts for categorical variables
 
 ```{r}
 # This function will use the output of getPUMSsum function as one of the argument, and summarize weighted mean, std. dev, and the count
