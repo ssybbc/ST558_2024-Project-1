@@ -180,7 +180,7 @@ getPUMSv2.1c <- function(year = 2022, numvarinput = "AGEP"){
   PUMScust_tibble <- as_tibble(PUMScust_parsed)
 # Address the error where the first row of PUMScust_tibble is mistakenly considered data, which should be the column names.
 # Set first row as column names
-  # Function "unlist" simply turns the first row of data into a vector.
+  # Function "unlist" turns the first row of data into a vector.
   colnames(PUMScust_tibble) <- as.character(unlist(PUMScust_tibble[1,]))
 # Remove the first row
   PUMScust_tibble <- PUMScust_tibble[-1,]
@@ -493,16 +493,19 @@ It throws out an error. Looks like geographic-related variables could not be sub
 ```{r}
 # WT: updated the above function as follows.
 # SS: 1. There is a special thing about the level "ST". as a variable it is called "ST", but in the "for" call it is called "state". It was a pity they were not the same.
-# SS: 2. Modified the tibble coding part. Use |> instead of %>% and adding more string to keep the coding compact. Droped the SCHL function that is previously encoded to speed up
+# SS: 2. Modified the tibble coding part. Use |> instead of %>% and adding more string to keep the coding compact. Dropped the SCHL function that is previously encoded to speed up
 
 getPUMSv4.3 <- function (year = 2022, 
                          numvarinput = "AGEP", 
                          catvarinput = "SEX", 
                          geolvlinput = "all", 
                          geospecinput) {
-  #If you requested to see such geographic level data, then need to get the geo data for the corresponding levels and also you could search specific code based on the requested geographic level.
+
+  base_url <- paste0("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  
+    #If you requested to see such geographic level data, then need to get the geo data for the corresponding levels and also you could search specific code based on the requested geographic level.
   if (geolvlinput %in% c("REGION", "DIVISION"))
-  {base_url <- paste0 ("https://api.census.gov/data/",as.character(year), "/acs/acs1/pums")
+  {
     query_params <- list(
     get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
     `for` = paste0 (geolvlinput,":",geospecinput),
@@ -510,7 +513,7 @@ getPUMSv4.3 <- function (year = 2022,
     key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
   }
   else if (geolvlinput == "ST")
-  {base_url <- paste0 ("https://api.census.gov/data/",as.character(year), "/acs/acs1/pums")
+  {
     query_params <- list(
     get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",","ST"),
     `for` = paste0 ("state",":",geospecinput),
@@ -518,7 +521,7 @@ getPUMSv4.3 <- function (year = 2022,
     key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
   }
   else if (geolvlinput == "all")
-  {base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
+  {
     query_params <- list(
     get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",","REGION",",","ST",",","DIVISION"),
     SCHL = "24",
@@ -602,7 +605,7 @@ getPUMSv4.4(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "S
 ```
 
 In the function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'.
-
+Tied up a couple of loose ends. We specify that state = "09" in the API query. According to the updated instructions, our group only works the subset data where ST = '09' (Connecticut). We also included a column of 'year'.
 ```{r}
 # This function is updated to include 'census' class assigned to the tibble  
 getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
@@ -612,11 +615,11 @@ getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SE
     for (year in years) {
     
     base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
-    
+    ST = "09"
     query_params <- list(
     get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
-    
-    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+    `for` = "state:09",  # add the state filter to the query, only pull ST = "09" data, Connecticut
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"    )
   # optional filtering
   if (!is.null(filter_value) & !is.null(filter_column)) {
     query_params[[filter_column]] <- filter_value
@@ -631,6 +634,8 @@ getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SE
   # change the column vector to 'factor' or 'numeric' type without adding a column to the dataset
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
+  
+  PUMScust_tibble <- PUMScust_tibble %>% mutate(year = as.character(year)) # add year column
     
   multiple_years[[as.character(year)]] <- PUMScust_tibble
   }  
@@ -673,7 +678,6 @@ summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
     # return the values as a named list
   result_list[[paste0(num_var, "_mean")]] <- sample_mean
   result_list[[paste0(num_var, "_sd")]] <- sample_stddev
-  
   }
   
   for (cat_var in cat_vars){
@@ -717,3 +721,15 @@ summary_stat
 plot.census(PUMS_tibble_census, "HHL", "GRPIP")
 
 ```
+
+## Final remarks.
+
+After several trial and error in each step explained in the instructions, we were able to finalize a function "getPUMSsum" that does what are required in the project. To verify the functionality, the function was called with various combinations of options, and we were able to obtain the summary statistics and the plot from the data retrived.
+
+```{r}
+PUMS_tibble_census <- getPUMSsum(c(2019, 2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+PUMS_tibble_census <- getPUMSsum(c(2019, 2021,2022),"GRPIP","SCH","ST",filter_value="24", filter_column = "SCHL" )
+PUMS_tibble_census <- getPUMSsum(c(2019, 2021,2022),"JWAP","JWTRNS","ST",filter_value="24", filter_column = "SCHL" )
+summary_stat <- summary.census(PUMS_tibble_census)
+```
+
