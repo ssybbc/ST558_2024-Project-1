@@ -37,7 +37,7 @@ Wow, that was successful. So the key was to put the conditions in the query argu
 
 # Data Processing
 
-Now we are going to set out to construct a new function called getPUMS. https://api.census.gov/data/2022/acs/acs1/pums/variables.html Showed all the variable in the data set, which has 525 variables. It would be very hard to get all the variables, even just to a few lines of data. So we have to make clear of what variables to get in the very beginning of writing and adjusting the functions. Let's first go with the original variables in the test sample and deal with the year issue.
+Now we are going to construct a new function called getPUMS. https://api.census.gov/data/2022/acs/acs1/pums/variables.html Showed all the variable in the data set, which has 525 variables. It would be very hard to get all the variables, even just to a few lines of data. So we have to make clear of what variables to get in the very beginning of writing and adjusting the functions. Let's first go with the original variables in the test sample and deal with the year issue.
 
 ## Select functions enabling the selection of year.
 
@@ -212,7 +212,7 @@ choosecat ("FER")
 We updated the above code as follows. Function is choosecatv2
 
 ```{r}
-# WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions
+# WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions.
 choosecatv2 <- function (catvarinput = "SEX"){
   if (catvarinput %in% c("FER", "HHL", "HISPEED", "JWTRNS", "SCH", "SCHL", "SEX")){
     catvar <- switch(catvarinput,
@@ -296,7 +296,13 @@ getPUMSv3b(2022,"GASP","HHL")
 
 We are interested in getting data with specific geographic levels and wanted to also specify the geographic items we are interested in (a specific region, district or state(s)). Checking the examples provided by the US census on the example URLs (https://api.census.gov/data/2022/acs/acs1/pums/examples.html):
 
-Default call: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=YOUR_KEY_GOES_HERE To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:*&SCHL=24&key=YOUR_KEY_GOES_HERE. To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:*&SCHL=24&key=YOUR_KEY_GOES_HERE To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=state:\*&SCHL=24&key=YOUR_KEY_GOES_HERE
+Default call: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=YOUR_KEY_GOES_HERE
+
+To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:*&SCHL=24&key=YOUR_KEY_GOES_HERE.*
+
+*To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:*&SCHL=24&key=YOUR_KEY_GOES_HERE
+
+To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=state:\*&SCHL=24&key=YOUR_KEY_GOES_HERE
 
 It is easy to see the parameter here need to deal with is "for=XXX", which is included in the argument "query" in the function GET(). Thus we could let the new function specify this part. But after playing with it for a while we figured out in the query_params, geographic option should be included in the "get=" argument instead of "for=" argument because in R for is designated for the loop.
 
@@ -354,17 +360,19 @@ For the ease of exercising, I directly input the level of geography in the previ
 choosegeolvl <- function (geolvlinput) {
   if (geolvlinput %in% c("REGION", "DIVISION","ST"))
   {geolvlvar <- geolvlinput}
-  else {geolvlvar <- "Error"}
+    else {geolvlvar <- "Error"}
   return (geolvlvar)
 }
 choosegeolvl ("ST")
 choosegeolvl("DIVISION")
+#SS: added another line to test error function
+choosegeolvl ("all")
 ```
 
 Now that we have the function to specify geographic level we want to display, integrate in the main function
 
 ```{r}
-getPUMSv4.1 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = "All") {
+getPUMSv4.1 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = NULL) {
   base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
   
   query_params <- list(
@@ -384,7 +392,8 @@ WT: Updated the above code as follows. Function "getPUMSv4.1b"
 
 ```{r}
 # WT: updated the code to "getPUMSv4.1b", but we did not see "All" in the variable list, only "region", "ST", ...
-getPUMSv4.1b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput) {
+# SS: 
+getPUMSv4.1b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = " ") {
   base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
   
   query_params <- list(
@@ -408,6 +417,8 @@ getPUMSv4.1b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX"
   
 }
 getPUMSv4.1b(2022,"GASP","HHL", "DIVISION")
+getPUMSv4.1b(2022,"GASP","HHL","
+        ")
 
 ```
 
@@ -431,8 +442,8 @@ getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
 getPUMSv4.2(2022,"GASP","HHL","ST")
 ```
 
-
 The column name issue is address in the following code "getPUMSv4.2b"
+
 ```{r}
 # WT: updated the above function as follows. Function "getPUMSv4.2b", still can't set geolvlinput default as ALL. This code does not work for geography level filtering
 getPUMSv4.2b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
@@ -675,8 +686,7 @@ plot.census(PUMS_tibble_census, "HHL", "GASP")
 
 ## Interesting topics to investigate using the census data and the API and summary functions.
 
-Topic - How does gross rent as a % of household income vary among different language speaking families?
-(We were more interested in finding income distribution among different attributes. However, the GRPIP is not one of the user options and this variable seems not working in API function. Will revisit)
+Topic - How does gross rent as a % of household income vary among different language speaking families? (We were more interested in finding income distribution among different attributes. However, the GRPIP is not one of the user options and this variable seems not working in API function. Will revisit)
 
 ```{r}
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GRPIP","HHL","ST",filter_value="24", filter_column = "SCHL" )
@@ -688,7 +698,3 @@ summary_stat
 plot.census(PUMS_tibble_census, "HHL", "GRPIP")
 
 ```
-
-
-
-
