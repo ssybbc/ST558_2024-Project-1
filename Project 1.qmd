@@ -357,7 +357,7 @@ For the ease of exercising, I directly input the level of geography in the previ
 
 ```{r}
 choosegeolvl <- function (geolvlinput) {
-  if (geolvlinput %in% c("REGION", "DIVISION","ST", "all"))
+  if (geolvlinput %in% c("REGION", "DIVISION","ST","all"))
   {geolvlvar <- geolvlinput}
   else {geolvlvar <- "Error"}
   return (geolvlvar)
@@ -490,21 +490,31 @@ getPUMSv4.2(2022,"GASP","HHL","ST","09")
 It throws out an error. Looks like geographic-related variables could not be subset in the same way as other variables. But how to solve the 'for' problem? We figured out later a backtick (\`) should be used to avoid confusion.
 
 ```{r}
-# WT: updated the above function as follows. Function "getPUMSv4.3b", still can't set geolvlinput default as ALL.
+# WT: updated the above function as follows.
+# SS: There is a special thing about the level "ST". as a variable it is called "ST", but in the "for" call it is called "state". It was a pity they were not the same.
 
 getPUMSv4.3 <- function (year = 2022, 
                          numvarinput = "AGEP", 
                          catvarinput = "SEX", 
                          geolvlinput = "all", 
                          geospecinput) {
-  if (geolvlinput %in% c("REGION", "DIVISION","ST"))
+  #If you requested to see such geographic level data, then need to get the geo data for the corresponding levels and also you could search specific code based on the requested geographic level.
+  if (geolvlinput %in% c("REGION", "DIVISION"))
   {base_url <- paste0 ("https://api.census.gov/data/",as.character(year), "/acs/acs1/pums")
     query_params <- list(
     get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
     `for` = paste0 (geolvlinput,":",geospecinput),
     SCHL = "24",
     key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
-    }
+  }
+  else if (geolvlinput == "ST")
+  {base_url <- paste0 ("https://api.census.gov/data/",as.character(year), "/acs/acs1/pums")
+    query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",","ST"),
+    `for` = paste0 ("state",":",geospecinput),
+    SCHL = "24",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
+  }
   else if (geolvlinput == "all")
   {base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
     query_params <- list(
@@ -512,19 +522,20 @@ getPUMSv4.3 <- function (year = 2022,
     SCHL = "24",
     key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")}
   
-  PUMScust <- httr::GET(url = base_url, query = query_params)
-  PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
-  PUMScust_tibble <- as_tibble (PUMScust_parsed)
+  PUMScustgeo <- httr::GET(url = base_url, query = query_params)
+  PUMScustgeo_parsed <- fromJSON(rawToChar(PUMScustgeo$content))
+  PUMScustgeo_tibble <- as_tibble (PUMScustgeo_parsed)
+   
   colnames(PUMScust_tibble) <- as.character(unlist(PUMScust_tibble[1,]))
   PUMScust_tibble <- PUMScust_tibble[-1, ]
   PUMScust_tibble <- mutate(PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
-  return (head (PUMScust_tibble))
+
   
  
 }
-getPUMSv4.3(2022,"GASP","HHL","state","09")
+getPUMSv4.3(2022,"GASP","HHL","state","37")
 getPUMSv4.3(2022,"GASP","HHL","DIVISION","5")
 getPUMSv4.3(2022,"GASP","HHL","REGION","1")
 ```
