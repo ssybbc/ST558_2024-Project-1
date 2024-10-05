@@ -553,6 +553,7 @@ getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "S
       query_params <- list(
         get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput),",",choosegeolvl(geolvlinput)),
         `for` = paste0 (geolvlinput,":",geospecinput),
+        SCHL = "24",
         key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
   }
   else if (geolvlinput == "ST")
