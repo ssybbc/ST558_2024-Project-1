@@ -83,6 +83,7 @@ choosenum <- function (numvarinput) {
   
 }
 choosenum ("AGEP")
+choosenum ("")
 ```
 
 It is weird no matter what I input, the choosenum function always returns an one-element vector. It turns out this is the setting of ifelse syntax. Try if-else sentence instead.
@@ -95,6 +96,7 @@ choosenum <- function (numvarinput) {
   return (numvar)
 }
 choosenum ("GASP")
+choosenum ("")
 ```
 
 It returns a string of two characters and takes both my input and another variant PWGTP. Now try "attaching" the new function with our main function getPUMS ()
@@ -102,12 +104,10 @@ It returns a string of two characters and takes both my input and another varian
 ```{r}
 getPUMSv2 <- function (year = 2022, numvarinput = "AGEP") {
   base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
-  
-  query_params <- list(
-  get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2]),
-                SCHL = "24",
-                key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c") 
-  
+    query_params <- list(
+    get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2]),
+    SCHL = "24",
+    key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c") 
   PUMScust <- httr::GET(url = base_url, query = query_params)
   PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
   PUMScust_tibble <- as_tibble (PUMScust_parsed)
@@ -125,6 +125,8 @@ getPUMSv2(2022)
 This is cool. This way ensures the numeric input must have a value. Now if you look closely at the objects returned by the getPUMSv2 function, these variables are all character variables. Make them numeric now!
 
 ```{r}
+#| echo: true
+#| eval: false
 getPUMSv2.1 <- function (year = 2022, numvarinput) {  
   base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
   
@@ -142,10 +144,13 @@ getPUMSv2.1 <- function (year = 2022, numvarinput) {
 getPUMSv2.1(2022, "GASP")
 ```
 
-Attempt to fix the error that might be due to missing values for PUMScust_tibble\$PWGTP
+Attempt to fix the error that might be due to missing values for PUMScust_tibble$PWGTP
 
 ```{r}
 # WT: Not yet fixed
+#| echo: true
+#| eval: false
+
 getPUMSv2.1b <- function (year = 2022, numvarinput = "AGEP") {  
   base_url <- paste0("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
   
@@ -188,11 +193,24 @@ getPUMSv2.1c <- function(year = 2022, numvarinput = "AGEP"){
   PUMScust_tibble <- type.convert(PUMScust_tibble, as.is = TRUE)
 # create a column with numeric value for PWGTP (double)
   PUMScust_tibble <- mutate (PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
-  return(head(PUMScust_tibble))
+  return(head(PUMScust_tibble,9))
 }
 getPUMSv2.1c(2022, "GASP")
-
 ```
+
+We noticed that there is a redundant column caused by mutate function, which we will drop later. Now go ahead to test other numeric variables to see if they work.
+```{r}
+getPUMSv2.1c(2022, "GRPIP")
+getPUMSv2.1c(2022, "JWAP")
+```
+```{r}
+getPUMSv2.1c(2022, "JWDP")
+```
+```{r}
+getPUMSv2.1c(2022, "JWMNP")
+```
+
+The problem is the time is changed into the correct format. Need to think of ways to decode the time code.
 
 Now, move on to the next topic.
 
@@ -210,7 +228,8 @@ choosecat <- function (catvarinput= "SEX") {
 choosecat ("FER")
 ```
 
-We updated the above code as follows. Function is choosecatv2
+The previous code did not the correct factor. 
+WT: We updated the above code as follows. Function is choosecatv2
 
 ```{r}
 # WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions.
@@ -232,7 +251,6 @@ choosecatv2 <- function (catvarinput = "SEX"){
      catvar <- "Error: Invalid input variable"
   }
   return(catvar)
-     
   }
   
 # calling the following function will return the details for the categorical variable
@@ -241,25 +259,31 @@ choosecatv2("SCHL")
 
 ```
 
-Now let's concatenate this sub function into the original function
+Now let's concatenate this sub function into the original function and setting up the default categorical variable input as "SEX".
 
 ```{r}
 getPUMSv3 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX") {
   base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
-  
   query_params <- list(
     get = paste0 (choosenum(numvarinput)[1],",",choosenum(numvarinput)[2],",",choosecat(catvarinput)),
     SCHL = "24",
     key = "41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c")
-  
   PUMScust <- httr::GET(url = base_url, query = query_params)
   PUMScust_parsed <- fromJSON(rawToChar(PUMScust$content))
   PUMScust_tibble <- as_tibble (PUMScust_parsed)
-  return (head (PUMScust_tibble))
+  return (head (PUMScust_tibble,9))
 }
 getPUMSv3(2022,"GASP","HHL")
 getPUMSv3(year=2022,numvarinput = "GASP")
+```
+We could try all the requested categorical variables to see if works.
 
+```{r}
+getPUMSv3(2022,"GASP","FER")
+getPUMSv3(2022,"GASP","HISPEED")
+getPUMSv3(2022,"GASP","JWTRNS")
+getPUMSv3(2022,"GASP","SCH")
+getPUMSv3(2022,"GASP","SCHL")
 ```
 
 Now except for the variables not being categorical but character, all other requirements are there.
@@ -485,7 +509,7 @@ getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX",
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
   return (head (PUMScust_tibble))
 }
-getPUMSv4.2(2022,"GASP","HHL","ST","09")
+getPUMSv4.2(2022,"GASP","HHL","state","09")
 ```
 
 It throws out an error. Looks like geographic-related variables could not be subset in the same way as other variables. But how to solve the 'for' problem? We figured out later a backtick (\`) should be used to avoid confusion.
@@ -545,7 +569,7 @@ Now we modify the function so that we can pull multiple years of survey data
 
 ```{r}
 # Function: getPUMSv4.4
-getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
+getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, geospecinput, filter_value = NULL, filter_column = NULL) {
   
   # create an empty list
   multiple_years <- list()
@@ -584,24 +608,19 @@ getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "S
   PUMScust_tibble <- as_tibble (PUMScust_parsed)
   colnames(PUMScust_tibble) <- as.character(unlist(PUMScust_tibble[1,]))
   PUMScust_tibble <- PUMScust_tibble[-1, ]
-  # this is to add a column and change the value type to numeric
-  PUMScust_tibble <- mutate(PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
-  
-  # change the column vector to 'factor' type without adding a column to the dataset
+  PUMScust_tibble <- PUMScust_tibble |> mutate(PWGTP := as.numeric(PUMScust_tibble$PWGTP))
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
-  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
+  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]])) |> select (1:4) |> mutate (YEAR = as.character (year))
+  #SS: Added year as a variable so that we know which year the data comes from
     
   multiple_years[[as.character(year)]] <- PUMScust_tibble
   }  
-  
-  allyeardata <- bind_rows(multiple_years)
-  
-  # we remove the 'head', so that the function returns a complete tibble dataset
+    allyeardata <- bind_rows(multiple_years)
+    # we remove the 'head', so that the function returns a complete tibble dataset
   return(allyeardata)
 }
 # following call works (takes long time)
-getPUMSv4.4(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
-
+getPUMSv4.4(c(2021,2022),"GASP","HHL","ST","37",filter_value="24", filter_column = "SCHL" )
 ```
 
 In the function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'.
@@ -630,13 +649,9 @@ getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SE
   colnames(PUMScust_tibble) <- as.character(unlist(PUMScust_tibble[1,]))
   PUMScust_tibble <- PUMScust_tibble[-1, ]
   # this is to add a column and change the value type to numeric
-  PUMScust_tibble <- mutate(PUMScust_tibble, PWGTP_n = as.numeric(PUMScust_tibble$PWGTP))
-  # change the column vector to 'factor' or 'numeric' type without adding a column to the dataset
+  PUMScust_tibble <- PUMScust_tibble |> mutate(PWGTP := as.numeric(PUMScust_tibble$PWGTP))
   PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosecat(catvarinput) := as.factor(.[[choosecat(catvarinput)]]))
-  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]]))
-  
-  PUMScust_tibble <- PUMScust_tibble %>% mutate(year = as.character(year)) # add year column
-    
+  PUMScust_tibble <- PUMScust_tibble %>% mutate(!!choosenum(numvarinput)[1] := as.numeric(.[[choosenum(numvarinput)[1]]])) |> select (1:4) |> mutate (YEAR = as.character (year))
   multiple_years[[as.character(year)]] <- PUMScust_tibble
   }  
   allyeardata <- bind_rows(multiple_years)
@@ -698,8 +713,14 @@ Next, We create a generic plot() function for a census class tibble
 library(ggplot2)
 
 plot.census <- function(tibble_data, cat_var, num_var){
-  plot <- ggplot((tibble_data), aes(x = get(cat_var), y = get(num_var), weight = PWGTP_n)) + geom_boxplot() +
-  labs(title = paste("Plot of", num_var, "by", cat_var)) + xlab(cat_var) + ylab(num_var)
+  plot <- ggplot((tibble_data), 
+                 aes(x = get(cat_var), 
+                     y = get(num_var), 
+                     weight = PWGTP_n)) +
+                geom_boxplot()+
+    labs(title = paste("Plot of", num_var, "by", cat_var)) +
+    xlab(cat_var) + 
+    ylab(num_var)
   print(plot)
 }
 
