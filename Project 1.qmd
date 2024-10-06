@@ -90,7 +90,7 @@ It is weird no matter what I input, the choosenum function always returns an one
 
 ```{r}
 choosenum <- function (numvarinput) {
-  if (numvarinput %in% c("AGEP", "GASP", "GRPIP", "JWAP", "JWMNP"))
+  if (numvarinput %in% c("AGEP", "GASP", "GRPIP", "JWAP","JWDP", "JWMNP"))
   {numvar <- c (numvarinput, "PWGTP")}
   else {numvar <- "Error"}
   return (numvar)
@@ -144,7 +144,7 @@ getPUMSv2.1 <- function (year = 2022, numvarinput) {
 getPUMSv2.1(2022, "GASP")
 ```
 
-Attempt to fix the error that might be due to missing values for PUMScust_tibble$PWGTP
+Attempt to fix the error that might be due to missing values for PUMScust_tibble\$PWGTP
 
 ```{r}
 # WT: Not yet fixed
@@ -196,6 +196,7 @@ getPUMSv2.1c <- function(year = 2022, numvarinput = "AGEP"){
   return(head(PUMScust_tibble,9))
 }
 getPUMSv2.1c(2022, "GASP")
+getPUMSv2.1c(2022, "JWDP")
 ```
 
 We noticed that there is a redundant column caused by mutate function, which we will drop later. Now go ahead to test other numeric variables to see if they work.
@@ -213,7 +214,7 @@ getPUMSv2.1c(2022, "JWDP")
 getPUMSv2.1c(2022, "JWMNP")
 ```
 
-The problem is the time is changed into the correct format. Need to think of ways to decode the time code.
+The problem is the time is changed into the correct format. Need to think of ways to decode the time code (see the last function getPUMSsum for a resolution)
 
 Now, move on to the next topic.
 
@@ -326,9 +327,9 @@ We are interested in getting data with specific geographic levels and wanted to 
 
 Default call: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=YOUR_KEY_GOES_HERE
 
-To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:*&SCHL=24&key=YOUR_KEY_GOES_HERE.
+To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:\*&SCHL=24&key=YOUR_KEY_GOES_HERE.
 
-To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:*&SCHL=24&key=YOUR_KEY_GOES_HERE
+To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:\*&SCHL=24&key=YOUR_KEY_GOES_HERE
 
 To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=state:\*&SCHL=24&key=YOUR_KEY_GOES_HERE
 
@@ -628,7 +629,7 @@ getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "S
 getPUMSv4.4(c(2021,2022),"GASP","HHL","ST","37",filter_value="24", filter_column = "SCHL" )
 ```
 
-In the function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'. Tied up a couple of loose ends. We specify that state = "09" in the API query. According to the updated instructions, our group only works the subset data where ST = '09' (Connecticut). We also included a column of 'year'.
+In the follwoing function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'. Tied up a couple of loose ends. We specify that state = "09" in the API query. According to the updated instructions, our group only works the subset data where ST = '09' (Connecticut). We also included a column of 'year'. Finally, we convert JWAP or JWDP to the minutes since midnight (column names are JWAP_since_midnight, JWDP_since_midnight, respective) with reasonable accuracy.
 
 ```{r}
 # This function is updated to include 'census' class assigned to the tibble  
@@ -662,22 +663,35 @@ getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SE
   allyeardata <- bind_rows(multiple_years)
   current_classes <- class(allyeardata)
   class(allyeardata) <- c("census", current_classes)
-  # we remove the 'head', so that the function returns a complete tibble dataset
+  
+  # to convert the JWDP and JWAP to the minutes since midnight, roughly
+  if("JWAP" %in% colnames(allyeardata)){
+    allyeardata <- allyeardata %>% mutate(JWAP_since_midnight = ifelse(JWAP != 0, 2+(JWAP-1)*5, 0))
+  }
+  if("JWDP" %in% colnames(allyeardata)){
+    allyeardata <- allyeardata %>% mutate(JWDP_since_midnight = ifelse(JWDP != 0, 15+9*(JWDP-1), 0))
+  }
+    # we remove the 'head', so that the function returns a complete tibble dataset
   return(allyeardata)
 }
-# following call works (takes long time)
+# following call works
 getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+getPUMSsum(c(2021,2022),"JWAP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+getPUMSsum(c(2021,2022),"JWDP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+getPUMSsum(c(2021,2022),"JWMNP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+
 # get the data and give it a name, which will be the first argument in the Function "summary.census"
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
-
+PUMS_tibble_census2 <- getPUMSsum(c(2021,2022),"JWAP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 ```
 
-We developed a function "summary.census" below that produces means and standard deviations for numeric variables and counts for categorical variables
-SS: To reflect changes in eleminating unecessary columns, a few changes were made.
+We developed a function "summary.census" below that produces means and standard deviations for numeric variables and counts for categorical variables SS: To reflect changes in eleminating unecessary columns, a few changes were made.
+
 ```{r}
 # This function will use the output of getPUMSsum function as one of the argument, and summarize weighted mean, std. dev, and the count
 summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
   # if numeric variable, then put it in a vector num_vars. We leave "PWGTP" out, it's the weighting info used in summary
+  
   if(is.null(num_vars)){
     num_vars <- names(tibble_data)[sapply(tibble_data, is.numeric) & names(tibble_data) != "PWGTP" ]
   }
@@ -691,11 +705,29 @@ summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
   for (num_var in num_vars){
     numeric_vector <- tibble_data[[num_var]]
   
+  # calculate mean and standard deviation for numeric variables. If it is JWAP, JWDP, JWMNP, then we only include nonzero values because the individual does not travel to work (WFH, etc) if it is zero.  
+  sample_mean <- if(num_var %in% c("JWAP", "JWDP", "JWMNP")){
+      valid_indices <- numeric_vector != 0
+      sum(numeric_vector[valid_indices] * weight_vector[valid_indices]) / sum(weight_vector[valid_indices])
+    }
+    else {
+       sum(numeric_vector*weight_vector)/sum(weight_vector)
+    }
+
+  sample_stddev <- if(num_var %in% c("JWAP", "JWDP", "JWMNP")){
+      valid_indices <- numeric_vector != 0
+      sqrt(sum(numeric_vector[valid_indices]^2*weight_vector[valid_indices])/sum(weight_vector[valid_indices])-sample_mean^2)
+    }
+    else {
+       sqrt(sum(numeric_vector^2*weight_vector)/sum(weight_vector)-sample_mean^2)
+    }
+
   # calculate sample mean for numeric variable
-  sample_mean <- sum(numeric_vector*weight_vector)/sum(weight_vector)
-    # calculate sample std dev for numeric variable
-  sample_stddev <- sqrt(sum(numeric_vector^2*weight_vector)/sum(weight_vector)-sample_mean^2)
-    # return the values as a named list
+  #  sample_mean <- sum(numeric_vector*weight_vector)/sum(weight_vector)
+  # calculate sample std dev for numeric variable
+  #  sample_stddev <- sqrt(sum(numeric_vector^2*weight_vector)/sum(weight_vector)-sample_mean^2)
+  
+  # return the values as a named list
   result_list[[paste0(num_var, "_mean")]] <- sample_mean
   result_list[[paste0(num_var, "_sd")]] <- sample_stddev
   }
@@ -709,6 +741,9 @@ summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
 
 summary_stat <- summary.census(PUMS_tibble_census)
 summary_stat
+
+summary_stat2 <- summary.census(PUMS_tibble_census2)
+summary_stat2
 ```
 
 Next, We create a generic plot() function for a census class tibble
@@ -731,12 +766,13 @@ plot.census <- function(tibble_data, cat_var, num_var){
 
 # call the function and return a plot
 plot.census(PUMS_tibble_census, "HHL", "GASP")
+plot.census(PUMS_tibble_census2, "HHL", "JWAP_since_midnight")
 ```
 
 ## Interesting topics to investigate using the census data and the API and summary functions.
 
-Topic - How does gross rent as a % of household income vary among different language speaking families? (We were more interested in finding income distribution among different attributes. However, the GRPIP is not one of the user options and this variable seems not working in API function. Will revisit)
-
+Topic - How does gross rent as a % of household income vary among different language speaking families? (We were more interested in finding income distribution among different attributes. However, the GRPIP variable seems not working in API function. Will revisit)
+Update: Works like a charm!
 ```{r}
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GRPIP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census
@@ -746,15 +782,18 @@ summary_stat
 # plot
 plot.census(PUMS_tibble_census, "HHL", "GRPIP")
 
+PUMS_tibble_census <- getPUMSsum(c(2021,2022),"JWAP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+
 ```
 
 ## Final remarks.
 
-After several trial and error in each step explained in the instructions, we were able to finalize a function "getPUMSsum" that does what are required in the project. To verify the functionality, the function was called with various combinations of options, and we were able to obtain the summary statistics and the plot from the data retrived.
+After several trial and error in each step explained in the instructions, we were able to finalize a function "getPUMSsum" that does what are required in the project. To verify the functionality, the function was called with various combinations of options, and we were able to obtain the summary statistics and the plot from the data retrieved.
 
 ```{r}
 PUMS_tibble_census <- getPUMSsum(c(2019, 2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census <- getPUMSsum(c(2019, 2021,2022),"GRPIP","SCH","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census <- getPUMSsum(c(2019, 2021,2022),"JWAP","JWTRNS","ST",filter_value="24", filter_column = "SCHL" )
 summary_stat <- summary.census(PUMS_tibble_census)
+summary_stat2 <- summary.census(PUMS_tibble_census2)
 ```
