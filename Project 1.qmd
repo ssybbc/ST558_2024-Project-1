@@ -682,6 +682,7 @@ getPUMSsum(c(2021,2022),"JWMNP","HHL","ST",filter_value="24", filter_column = "S
 
 # get the data and give it a name, which will be the first argument in the Function "summary.census"
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+PUMS_tibble_census1 <- getPUMSsum(c(2021,2022),"GRPIP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census2 <- getPUMSsum(c(2021,2022),"JWAP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 ```
 
@@ -766,6 +767,7 @@ plot.census <- function(tibble_data, cat_var, num_var){
 
 # call the function and return a plot
 plot.census(PUMS_tibble_census, "HHL", "GASP")
+plot.census(PUMS_tibble_census1, "HHL", "GRPIP")
 plot.census(PUMS_tibble_census2, "HHL", "JWAP_since_midnight")
 ```
 
