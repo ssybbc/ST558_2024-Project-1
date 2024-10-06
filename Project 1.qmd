@@ -144,7 +144,7 @@ getPUMSv2.1 <- function (year = 2022, numvarinput) {
 getPUMSv2.1(2022, "GASP")
 ```
 
-Attempt to fix the error that might be due to missing values for PUMScust_tibble$PWGTP
+Attempt to fix the error that might be due to missing values for PUMScust_tibble\$PWGTP
 
 ```{r}
 # WT: Not yet fixed
@@ -199,13 +199,16 @@ getPUMSv2.1c(2022, "GASP")
 ```
 
 We noticed that there is a redundant column caused by mutate function, which we will drop later. Now go ahead to test other numeric variables to see if they work.
+
 ```{r}
 getPUMSv2.1c(2022, "GRPIP")
 getPUMSv2.1c(2022, "JWAP")
 ```
+
 ```{r}
 getPUMSv2.1c(2022, "JWDP")
 ```
+
 ```{r}
 getPUMSv2.1c(2022, "JWMNP")
 ```
@@ -228,8 +231,7 @@ choosecat <- function (catvarinput= "SEX") {
 choosecat ("FER")
 ```
 
-The previous code did not the correct factor. 
-WT: We updated the above code as follows. Function is choosecatv2
+The previous code did not the correct factor. WT: We updated the above code as follows. Function is choosecatv2
 
 ```{r}
 # WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions.
@@ -276,6 +278,7 @@ getPUMSv3 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX") {
 getPUMSv3(2022,"GASP","HHL")
 getPUMSv3(year=2022,numvarinput = "GASP")
 ```
+
 We could try all the requested categorical variables to see if works.
 
 ```{r}
@@ -323,9 +326,9 @@ We are interested in getting data with specific geographic levels and wanted to 
 
 Default call: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&SCHL=24&key=YOUR_KEY_GOES_HERE
 
-To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:*&SCHL=24&key=YOUR_KEY_GOES_HERE.*
+To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=region:\*&SCHL=24&key=YOUR_KEY_GOES_HERE.
 
-*To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:*&SCHL=24&key=YOUR_KEY_GOES_HERE
+To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=division:\*&SCHL=24&key=YOUR_KEY_GOES_HERE
 
 To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&for=state:\*&SCHL=24&key=YOUR_KEY_GOES_HERE
 
@@ -461,6 +464,8 @@ getPUMSv4.1b(2022,"GASP","HHL", "all")
 Now let's enable an option to allow user to subset the data based on geographic information, and it must be on API. Considering the argument of query is essentially a list, which specifies "SCHL ="24", we could try specify here as well.
 
 ```{r}
+#| echo: true
+#| eval: false
 getPUMSv4.2 <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX", geolvlinput = "all", geospctinput) {
   if (geolvlinput == "REGION")
   {base_url <- paste0 ("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
@@ -623,8 +628,8 @@ getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "S
 getPUMSv4.4(c(2021,2022),"GASP","HHL","ST","37",filter_value="24", filter_column = "SCHL" )
 ```
 
-In the function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'.
-Tied up a couple of loose ends. We specify that state = "09" in the API query. According to the updated instructions, our group only works the subset data where ST = '09' (Connecticut). We also included a column of 'year'.
+In the function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'. Tied up a couple of loose ends. We specify that state = "09" in the API query. According to the updated instructions, our group only works the subset data where ST = '09' (Connecticut). We also included a column of 'year'.
+
 ```{r}
 # This function is updated to include 'census' class assigned to the tibble  
 getPUMSsum <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "SEX", geolvlinput, filter_value = NULL, filter_column = NULL) {
@@ -667,21 +672,21 @@ PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24
 
 ```
 
-We developed a function "summary.census" below that produces means and standard deviations for numeric variables and counts for categorical variables
+We developed a function "summary.census" below that produces means and standard deviations for numeric variables and counts for categorical variables SS: To reflect changes in eleminating unecessary columns, a few changes were made.
 
 ```{r}
 # This function will use the output of getPUMSsum function as one of the argument, and summarize weighted mean, std. dev, and the count
 summary.census <- function(tibble_data, num_vars=NULL, cat_vars=NULL) {
-  # if numeric variable, then put it in a vector num_vars. We leave "PWGTP_n" out, it's the weighting info used in summary
+  # if numeric variable, then put it in a vector num_vars. We leave "PWGTP" out, it's the weighting info used in summary
   if(is.null(num_vars)){
-    num_vars <- names(tibble_data)[sapply(tibble_data, is.numeric) & names(tibble_data) != "PWGTP_n" ]
+    num_vars <- names(tibble_data)[sapply(tibble_data, is.numeric) & names(tibble_data) != "PWGTP" ]
   }
   # if categorical variable, then put it in a vector cat_vars
   if(is.null(cat_vars)){
     cat_vars <- names(tibble_data)[sapply(tibble_data, is.factor)]
   }
     result_list <- list()
-  weight_vector <- tibble_data$PWGTP_n
+  weight_vector <- tibble_data$PWGTP
   
   for (num_var in num_vars){
     numeric_vector <- tibble_data[[num_var]]
@@ -716,7 +721,7 @@ plot.census <- function(tibble_data, cat_var, num_var){
   plot <- ggplot((tibble_data), 
                  aes(x = get(cat_var), 
                      y = get(num_var), 
-                     weight = PWGTP_n)) +
+                     weight = PWGTP)) +
                 geom_boxplot()+
     labs(title = paste("Plot of", num_var, "by", cat_var)) +
     xlab(cat_var) + 
@@ -754,3 +759,8 @@ PUMS_tibble_census <- getPUMSsum(c(2019, 2021,2022),"JWAP","JWTRNS","ST",filter_
 summary_stat <- summary.census(PUMS_tibble_census)
 ```
 
+-   Remaning problems:
+
+    -   Did not convert the time format
+
+    -   plot.census does not work on my end, do not know how to solve.
