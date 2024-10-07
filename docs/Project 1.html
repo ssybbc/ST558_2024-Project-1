@@ -58,24 +58,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="Project 1_files/libs/clipboard/clipboard.min.js"></script>
-<script src="Project 1_files/libs/quarto-html/quarto.js"></script>
-<script src="Project 1_files/libs/quarto-html/popper.min.js"></script>
-<script src="Project 1_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="Project 1_files/libs/quarto-html/anchor.min.js"></script>
-<link href="Project 1_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="Project 1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="Project 1_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="Project 1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Project 1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
 
 
 </head>
 
 <body class="fullcontent">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -639,11 +668,11 @@ Attaching package: 'dplyr'</code></pre>
   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
 1 GASP  PWGTP SCHL  SCHL 
 2 3     6     24    24   
-3 5     23    24    24   
-4 7     23    24    24   
-5 3     80    724   24   
-6 3     16    24    124  
-7 313   1107  24    24   
+3 3     23    24    24   
+4 3     23    24    24   
+5 3     80    24    24   
+6 3     16    24    24   
+7 3     107   24    24   
 8 3     10    24    24   
 9 3     22    24    24   </code></pre>
 </div>
@@ -807,11 +836,11 @@ Attaching package: 'dplyr'</code></pre>
   V1    V2    V3    V4    V5   
   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
 1 GASP  PWGTP HHL   ST    SCHL 
-2 3     6     0     17    24   
-3 3     23    0     06    24   
-4 3     23    0     42    24   
-5 3     80    0     49    24   
-6 3     16    0     18    24   </code></pre>
+2 280   30    3     06    24   
+3 3     55    5     06    24   
+4 3     62    1     39    24   
+5 3     98    1     42    24   
+6 40    33    3     48    24   </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.1</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -876,12 +905,12 @@ Attaching package: 'dplyr'</code></pre>
 <pre><code># A tibble: 6 × 8
    GASP PWGTP HHL   REGION ST    DIVISION SCHL  PWGTP_n
   &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;
-1    50 110   1     3      48    7        24        110
-2    50 102   1     3      48    7        24        102
-3    40 74    4     4      06    9        24         74
-4    40 199   1     2      20    4        24        199
-5   100 15    1     2      17    3        24         15
-6    50 19    1     4      35    8        24         19</code></pre>
+1     3 6     0     2      17    3        24          6
+2     3 23    0     4      06    9        24         23
+3     3 23    0     1      42    2        24         23
+4     3 80    0     4      49    8        24         80
+5     3 16    0     2      18    3        24         16
+6     3 107   0     2      18    3        24        107</code></pre>
 </div>
 </div>
 <p>Now let’s enable an option to allow user to subset the data based on geographic information, and it must be on API. Considering the argument of query is essentially a list, which specifies “SCHL =”24”, we could try specify here as well.</p>
@@ -988,36 +1017,36 @@ Attaching package: 'dplyr'</code></pre>
 <pre><code># A tibble: 6 × 4
    GASP PWGTP HHL   ST   
   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt;
-1   100   107 1     37   
-2     3    81 1     37   
-3     3    62 1     37   
-4   130    51 1     37   
-5     3    63 4     37   
-6     3   153 1     37   </code></pre>
+1    40    88 1     37   
+2    80   109 4     37   
+3    30    42 1     37   
+4     3   116 1     37   
+5     3   149 1     37   
+6     3   224 4     37   </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"DIVISION"</span>,<span class="st">"5"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
    GASP PWGTP HHL   DIVISION
   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt;   
-1    80    79 1     5       
-2    20    55 4     5       
-3     3   170 5     5       
-4     3    60 4     5       
-5     3   105 2     5       
-6    30    60 1     5       </code></pre>
+1     3    10 0     5       
+2     3   138 0     5       
+3     3    42 0     5       
+4     3    27 0     5       
+5     3     9 0     5       
+6     3    74 0     5       </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"REGION"</span>,<span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
    GASP PWGTP HHL   REGION
   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; 
-1     3    98 1     1     
-2     3    61 1     1     
-3     3   136 4     1     
-4     3    58 1     1     
-5     3    48 1     1     
-6     3    42 1     1     </code></pre>
+1     3    23 0     1     
+2     3    20 0     1     
+3     3    24 0     1     
+4     3    98 0     1     
+5     3   101 0     1     
+6     3   114 0     1     </code></pre>
 </div>
 </div>
 </section>
@@ -1185,16 +1214,16 @@ Attaching package: 'dplyr'</code></pre>
 <pre><code># A tibble: 1,245 × 6
     JWDP PWGTP HHL   ST    YEAR  JWDP_since_midnight
    &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt;
- 1     0    52 0     09    2021                    0
- 2     0     3 0     09    2021                    0
- 3     0     5 0     09    2021                    0
- 4     0    19 0     09    2021                    0
- 5     0     3 0     09    2021                    0
- 6     0    10 0     09    2021                    0
- 7     0    91 0     09    2021                    0
- 8     0     4 0     09    2021                    0
- 9    47    66 5     09    2021                  429
-10    43   381 1     09    2021                  393
+ 1    31   193 2     09    2021                  285
+ 2     0    51 3     09    2021                    0
+ 3    61   108 3     09    2021                  555
+ 4     0    82 3     09    2021                    0
+ 5    61    54 3     09    2021                  555
+ 6    19    60 1     09    2021                  177
+ 7     0    54 1     09    2021                    0
+ 8    79    52 1     09    2021                  717
+ 9     0    91 1     09    2021                    0
+10     0    58 1     09    2021                    0
 # ℹ 1,235 more rows</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWMNP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1202,16 +1231,16 @@ Attaching package: 'dplyr'</code></pre>
 <pre><code># A tibble: 1,245 × 5
    JWMNP PWGTP HHL   ST    YEAR 
    &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;
- 1    40   193 2     09    2021 
- 2     0    51 3     09    2021 
- 3    60   108 3     09    2021 
- 4     0    82 3     09    2021 
- 5    15    54 3     09    2021 
- 6    90    60 1     09    2021 
- 7     0    54 1     09    2021 
- 8    20    52 1     09    2021 
- 9     0    91 1     09    2021 
-10     0    58 1     09    2021 
+ 1     0    52 0     09    2021 
+ 2     0     3 0     09    2021 
+ 3     0     5 0     09    2021 
+ 4     0    19 0     09    2021 
+ 5     0     3 0     09    2021 
+ 6     0    10 0     09    2021 
+ 7     0    91 0     09    2021 
+ 8     0     4 0     09    2021 
+ 9    30    66 5     09    2021 
+10    70   381 1     09    2021 
 # ℹ 1,235 more rows</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the data and give it a name, which will be the first argument in the Function "summary.census"</span></span>
@@ -1223,16 +1252,16 @@ Attaching package: 'dplyr'</code></pre>
 <pre><code># A tibble: 1,245 × 6
     JWAP PWGTP HHL   ST    YEAR  JWAP_since_midnight
    &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt;
- 1     0    52 0     09    2021                    0
- 2     0     3 0     09    2021                    0
- 3     0     5 0     09    2021                    0
- 4     0    19 0     09    2021                    0
- 5     0     3 0     09    2021                    0
- 6     0    10 0     09    2021                    0
- 7     0    91 0     09    2021                    0
- 8     0     4 0     09    2021                    0
- 9    92    66 5     09    2021                  457
-10    96   381 1     09    2021                  477
+ 1    88   224 3     09    2021                  437
+ 2     0    34 1     09    2021                    0
+ 3     0    52 1     09    2021                    0
+ 4     0    64 1     09    2021                    0
+ 5   109   157 3     09    2021                  542
+ 6     0    55 1     09    2021                    0
+ 7     0    33 1     09    2021                    0
+ 8   104    68 1     09    2021                  517
+ 9     0    54 1     09    2021                    0
+10     0   111 3     09    2021                    0
 # ℹ 1,235 more rows</code></pre>
 </div>
 </div>
@@ -1348,14 +1377,17 @@ $HHL_counts
 <span id="cb108-12"><a href="#cb108-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb108-13"><a href="#cb108-13" aria-hidden="true" tabindex="-1"></a><span class="co"># call the function and return a plot</span></span>
 <span id="cb108-14"><a href="#cb108-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census, <span class="st">"HHL"</span>, <span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rq.fit.br(wx, wy, tau = tau, ...): Solution may be nonunique</code></pre>
+</div>
 <div class="cell-output-display">
 <p><img src="Project-1_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census1, <span class="st">"HHL"</span>, <span class="st">"GRPIP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census1, <span class="st">"HHL"</span>, <span class="st">"GRPIP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Project-1_files/figure-html/unnamed-chunk-31-2.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census2, <span class="st">"HHL"</span>, <span class="st">"JWAP_since_midnight"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census2, <span class="st">"HHL"</span>, <span class="st">"JWAP_since_midnight"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Project-1_files/figure-html/unnamed-chunk-31-3.png" class="img-fluid" width="672"></p>
 </div>
@@ -1365,27 +1397,27 @@ $HHL_counts
 <h2 class="anchored" data-anchor-id="interesting-topics-to-investigate-using-the-census-data-and-the-api-and-summary-functions.">Interesting topics to investigate using the census data and the API and summary functions.</h2>
 <p>Topic - How does gross rent as a % of household income vary among different language speaking families? (We were more interested in finding income distribution among different attributes. However, the GRPIP variable seems not working in API function. Will revisit) Update: Works like a charm!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GRPIP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
-<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GRPIP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,245 × 5
    GRPIP PWGTP HHL   ST    YEAR 
    &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;
- 1     0    52 0     09    2021 
- 2     0     3 0     09    2021 
- 3     0     5 0     09    2021 
- 4     0    19 0     09    2021 
- 5     0     3 0     09    2021 
- 6     0    10 0     09    2021 
- 7     0    91 0     09    2021 
- 8     0     4 0     09    2021 
- 9     0    66 5     09    2021 
-10     0   381 1     09    2021 
+ 1     0   193 2     09    2021 
+ 2     0    51 3     09    2021 
+ 3     0   108 3     09    2021 
+ 4     0    82 3     09    2021 
+ 5    29    54 3     09    2021 
+ 6     0    60 1     09    2021 
+ 7    25    54 1     09    2021 
+ 8    22    52 1     09    2021 
+ 9     0    91 1     09    2021 
+10    20    58 1     09    2021 
 # ℹ 1,235 more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="co"># obtain the summary statistics</span></span>
-<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>summary_stat <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census)</span>
-<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a>summary_stat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="co"># obtain the summary statistics</span></span>
+<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a>summary_stat <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census)</span>
+<span id="cb114-3"><a href="#cb114-3" aria-hidden="true" tabindex="-1"></a>summary_stat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$GRPIP_mean
 [1] 4.989386
@@ -1400,8 +1432,8 @@ $HHL_counts
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census, <span class="st">"HHL"</span>, <span class="st">"GRPIP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census, <span class="st">"HHL"</span>, <span class="st">"GRPIP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Project-1_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -1411,17 +1443,18 @@ $HHL_counts
 <h2 class="anchored" data-anchor-id="final-remarks.">Final remarks.</h2>
 <p>After several trial and error in each step explained in the instructions, we were able to finalize a function “getPUMSsum” that does what are required in the project. To verify the functionality, the function was called with various combinations of options, and we were able to obtain the summary statistics and the plot from the data retrieved.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
-<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GRPIP"</span>,<span class="st">"SCH"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
-<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWAP"</span>,<span class="st">"JWTRNS"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
-<span id="cb116-4"><a href="#cb116-4" aria-hidden="true" tabindex="-1"></a>summary_stat <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census)</span>
-<span id="cb116-5"><a href="#cb116-5" aria-hidden="true" tabindex="-1"></a>summary_stat2 <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GRPIP"</span>,<span class="st">"SCH"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWAP"</span>,<span class="st">"JWTRNS"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb117-4"><a href="#cb117-4" aria-hidden="true" tabindex="-1"></a>summary_stat <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census)</span>
+<span id="cb117-5"><a href="#cb117-5" aria-hidden="true" tabindex="-1"></a>summary_stat2 <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+
+
 </section>
 </section>
 
-</main>
-<!-- /main column -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
