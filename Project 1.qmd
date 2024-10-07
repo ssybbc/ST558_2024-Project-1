@@ -165,7 +165,6 @@ getPUMSv2.1b <- function (year = 2022, numvarinput = "AGEP") {
     return(head(PUMScust_tibble))
 }
 getPUMSv2.1b(2022, "GASP")
-
 ```
 
 We fixed the issue of column names in the below updated function getPUMSv2.1c
@@ -257,7 +256,6 @@ choosecatv2 <- function (catvarinput = "SEX"){
 # calling the following function will return the details for the categorical variable
 choosecatv2("HHL")
 choosecatv2("SCHL")
-
 ```
 
 Now let's concatenate this sub function into the original function and setting up the default categorical variable input as "SEX".
@@ -316,7 +314,6 @@ getPUMSv3b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX") 
   
 }
 getPUMSv3b(2022,"GASP","HHL")
-
 ```
 
 ## Make a function to specify the geographical level
@@ -377,7 +374,6 @@ getPUMSv4.0b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX"
   
 }
 getPUMSv4.0b(2022,"GASP","HHL")
-
 ```
 
 For the ease of exercising, I directly input the level of geography in the previous function. Now we want to build a function to let user select geographic level as well as specify the region, division or state. Let's make a small function first.
@@ -456,7 +452,6 @@ getPUMSv4.1b <- function (year = 2022, numvarinput = "AGEP", catvarinput = "SEX"
 }
 getPUMSv4.1b(2022,"GASP","HHL", "DIVISION")
 getPUMSv4.1b(2022,"GASP","HHL", "all")
-
 ```
 
 Now let's enable an option to allow user to subset the data based on geographic information, and it must be on API. Considering the argument of query is essentially a list, which specifies "SCHL ="24", we could try specify here as well.
@@ -687,6 +682,7 @@ getPUMSsum(c(2021,2022),"JWMNP","HHL","ST",filter_value="24", filter_column = "S
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GASP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census1 <- getPUMSsum(c(2021,2022),"GRPIP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census2 <- getPUMSsum(c(2021,2022),"JWAP","HHL","ST",filter_value="24", filter_column = "SCHL" )
+PUMS_tibble_census2
 ```
 
 We developed a function "summary.census" below that produces means and standard deviations for numeric variables and counts for categorical variables SS: To reflect changes in eleminating unecessary columns, a few changes were made.
@@ -755,8 +751,6 @@ summary_stat2
 Next, We create a generic plot() function for a census class tibble
 
 ```{r}
-#| echo: true
-#| eval: false
 # This code chunk creates a generic plot() function for a census class tibble, with three arguments. 
 library(ggplot2)
 
@@ -783,18 +777,18 @@ plot.census(PUMS_tibble_census2, "HHL", "JWAP_since_midnight")
 Topic - How does gross rent as a % of household income vary among different language speaking families? (We were more interested in finding income distribution among different attributes. However, the GRPIP variable seems not working in API function. Will revisit) Update: Works like a charm!
 
 ```{r}
-#| echo: true
-#| eval: false
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GRPIP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census
 # obtain the summary statistics
 summary_stat <- summary.census(PUMS_tibble_census)
 summary_stat
+```
+
+```{r}
 # plot
 plot.census(PUMS_tibble_census, "HHL", "GRPIP")
-PUMS_tibble_census <- getPUMSsum(c(2021,2022),"JWAP","HHL","ST",filter_value="24", filter_column = "SCHL" )
-
 ```
+
 
 ## Final remarks.
 
