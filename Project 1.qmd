@@ -1,6 +1,6 @@
 ---
 title: "ST558-Project 1"
-author: "Siyuan Su" "Wenye Tang"
+author: "Siyuan Su, Wenye Tang"
 format: html
 editor: visual
 ---
@@ -147,10 +147,9 @@ getPUMSv2.1(2022, "GASP")
 Attempt to fix the error that might be due to missing values for PUMScust_tibble\$PWGTP
 
 ```{r}
-# WT: Not yet fixed
 #| echo: true
 #| eval: false
-
+# WT: Not yet fixed
 getPUMSv2.1b <- function (year = 2022, numvarinput = "AGEP") {  
   base_url <- paste0("https://api.census.gov/data/", as.character(year), "/acs/acs1/pums")
   
@@ -196,7 +195,6 @@ getPUMSv2.1c <- function(year = 2022, numvarinput = "AGEP"){
   return(head(PUMScust_tibble,9))
 }
 getPUMSv2.1c(2022, "GASP")
-getPUMSv2.1c(2022, "JWDP")
 ```
 
 We noticed that there is a redundant column caused by mutate function, which we will drop later. Now go ahead to test other numeric variables to see if they work.
@@ -393,7 +391,6 @@ choosegeolvl <- function (geolvlinput) {
 }
 choosegeolvl ("ST")
 choosegeolvl("DIVISION")
-#SS: added another line to test error function
 choosegeolvl ("all")
 ```
 
@@ -571,6 +568,8 @@ getPUMSv4.3(2022,"GASP","HHL","DIVISION","5")
 getPUMSv4.3(2022,"GASP","HHL","REGION","1")
 ```
 
+## Make a function to see multiple years of survey data
+
 Now we modify the function so that we can pull multiple years of survey data
 
 ```{r}
@@ -628,6 +627,10 @@ getPUMSv4.4 <- function (years = c(2022), numvarinput = "AGEP", catvarinput = "S
 # following call works (takes long time)
 getPUMSv4.4(c(2021,2022),"GASP","HHL","ST","37",filter_value="24", filter_column = "SCHL" )
 ```
+
+# Writing a generic function for Summarizing.
+
+## First steps
 
 In the follwoing function "getPUMSsum", we get the class 'census' assigned to tibble at the end, to get things ready for the next function 'summary.census'. Tied up a couple of loose ends. We specify that state = "09" in the API query. According to the updated instructions, our group only works the subset data where ST = '09' (Connecticut). We also included a column of 'year'. Finally, we convert JWAP or JWDP to the minutes since midnight (column names are JWAP_since_midnight, JWDP_since_midnight, respective) with reasonable accuracy.
 
@@ -747,9 +750,13 @@ summary_stat2 <- summary.census(PUMS_tibble_census2)
 summary_stat2
 ```
 
+## Plot function
+
 Next, We create a generic plot() function for a census class tibble
 
 ```{r}
+#| echo: true
+#| eval: false
 # This code chunk creates a generic plot() function for a census class tibble, with three arguments. 
 library(ggplot2)
 
@@ -776,6 +783,8 @@ plot.census(PUMS_tibble_census2, "HHL", "JWAP_since_midnight")
 Topic - How does gross rent as a % of household income vary among different language speaking families? (We were more interested in finding income distribution among different attributes. However, the GRPIP variable seems not working in API function. Will revisit) Update: Works like a charm!
 
 ```{r}
+#| echo: true
+#| eval: false
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"GRPIP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 PUMS_tibble_census
 # obtain the summary statistics
@@ -783,7 +792,6 @@ summary_stat <- summary.census(PUMS_tibble_census)
 summary_stat
 # plot
 plot.census(PUMS_tibble_census, "HHL", "GRPIP")
-
 PUMS_tibble_census <- getPUMSsum(c(2021,2022),"JWAP","HHL","ST",filter_value="24", filter_column = "SCHL" )
 
 ```

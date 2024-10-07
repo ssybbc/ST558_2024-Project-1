@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Siyuan Su, Wenye Tang">
+
+<title>ST558-Project 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Project 1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Project 1_files/libs/quarto-html/quarto.js"></script>
+<script src="Project 1_files/libs/quarto-html/popper.min.js"></script>
+<script src="Project 1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Project 1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Project 1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Project 1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Project 1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Project 1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Project 1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ST558-Project 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Siyuan Su, Wenye Tang </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Census data is of a great interest of statisticians, but it could be challenging to get data from API. Let’s first try the example call:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (jsonlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'jsonlite' was built under R version 4.3.3</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>base_url_trial <span class="ot">&lt;-</span> <span class="st">"https://api.census.gov/data/2022/acs/acs1/pums"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">get =</span> <span class="st">"SEX,PWGTP,MAR"</span>,   <span class="co"># Fields to retrieve</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">SCHL =</span> <span class="st">"24"</span>,             <span class="co"># Filter</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>  <span class="co"># API key</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>PUMS_trial <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url_trial, <span class="at">query =</span> query_params)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>PUMS_trial_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMS_trial<span class="sc">$</span>content))</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span> (PUMS_trial_parsed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> chr [1:44080, 1:4] "SEX" "2" "2" "1" "1" "1" "1" "2" "1" "2" "2" "1" "2" ...</code></pre>
+</div>
+</div>
+<p>Then we turn the PUMS_trial into a tibble</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>PUMS_trial_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMS_trial_parsed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
+`.name_repair` is omitted as of tibble 2.0.0.
+ℹ Using compatibility `.name_repair`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> (PUMS_trial_tibble)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  V1    V2    V3    V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 SEX   PWGTP MAR   SCHL 
+2 2     6     5     24   
+3 2     23    2     24   
+4 1     23    3     24   
+5 1     80    5     24   
+6 1     16    1     24   </code></pre>
+</div>
+</div>
+<p>Wow, that was successful. So the key was to put the conditions in the query argument in the function GET().</p>
+</section>
+<section id="data-processing" class="level1">
+<h1>Data Processing</h1>
+<p>Now we are going to construct a new function called getPUMS. https://api.census.gov/data/2022/acs/acs1/pums/variables.html Showed all the variable in the data set, which has 525 variables. It would be very hard to get all the variables, even just to a few lines of data. So we have to make clear of what variables to get in the very beginning of writing and adjusting the functions. Let’s first go with the original variables in the test sample and deal with the year issue.</p>
+<section id="select-functions-enabling-the-selection-of-year." class="level2">
+<h2 class="anchored" data-anchor-id="select-functions-enabling-the-selection-of-year.">Select functions enabling the selection of year.</h2>
+<p>We wanted to customize a function that enable custom-selection of Year of survey with default at 2022. That must have something to do with the URL we are inquiring. Let’s stick to the variable settings in the trial and play with the year of survey first.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>getPUMS <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>) {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">get =</span> <span class="st">"SEX,PWGTP,MAR,AGEP"</span>,   </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">SCHL =</span> <span class="st">"24"</span>,             </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>) </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble))</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMS</span> (<span class="dv">2022</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  V1    V2    V3    V4    V5   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 SEX   PWGTP MAR   AGEP  SCHL 
+2 2     6     5     88    24   
+3 2     23    2     84    24   
+4 1     23    3     57    24   
+5 1     80    5     37    24   
+6 1     16    1     82    24   </code></pre>
+</div>
+</div>
+<p>It looks like worked. Let’s see whether it worked on other years.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMS</span> (<span class="dv">2021</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  V1    V2    V3    V4    V5   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 SEX   PWGTP MAR   AGEP  SCHL 
+2 1     118   3     71    24   
+3 1     20    3     49    24   
+4 2     9     5     81    24   
+5 1     13    1     94    24   
+6 2     38    5     86    24   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMS</span> (<span class="dv">2019</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  V1    V2    V3    V4    V5   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 SEX   PWGTP MAR   AGEP  SCHL 
+2 2     6     5     83    24   
+3 1     14    5     40    24   
+4 1     17    3     53    24   
+5 1     16    5     28    24   
+6 1     23    1     59    24   </code></pre>
+</div>
+</div>
+<p>They all worked. I also noticed that if year=2020, will return an error. It turned out the ACS 1-Year PUMS data for the year 2020 was not included in the default path because of smaller-than-previous sample issue.</p>
+</section>
+<section id="make-a-function-that-specifies-the-numeric-values-to-be-returned." class="level2">
+<h2 class="anchored" data-anchor-id="make-a-function-that-specifies-the-numeric-values-to-be-returned.">Make a function that specifies the numeric values to be returned.</h2>
+<p>Next we wanted to make a function that solely tells which numeric values to be returned. Default was AGEP and PWGTP, with several options being available.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>choosenum <span class="ot">&lt;-</span> <span class="cf">function</span> (numvarinput) {</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  numvar <span class="ot">&lt;-</span> <span class="fu">ifelse</span> (numvarinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>, <span class="st">"GASP"</span>, <span class="st">"GRPIP"</span>, <span class="st">"JWAP"</span>, <span class="st">"JWMNP"</span>),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>             <span class="fu">c</span>(numvarinput, <span class="st">"PWGTP"</span>), </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"error: numeric variable must match with exisiting numeric variable names"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (numvar)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">choosenum</span> (<span class="st">"AGEP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "AGEP"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">choosenum</span> (<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "error: numeric variable must match with exisiting numeric variable names"</code></pre>
+</div>
+</div>
+<p>It is weird no matter what I input, the choosenum function always returns an one-element vector. It turns out this is the setting of ifelse syntax. Try if-else sentence instead.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>choosenum <span class="ot">&lt;-</span> <span class="cf">function</span> (numvarinput) {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (numvarinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"AGEP"</span>, <span class="st">"GASP"</span>, <span class="st">"GRPIP"</span>, <span class="st">"JWAP"</span>,<span class="st">"JWDP"</span>, <span class="st">"JWMNP"</span>))</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  {numvar <span class="ot">&lt;-</span> <span class="fu">c</span> (numvarinput, <span class="st">"PWGTP"</span>)}</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> {numvar <span class="ot">&lt;-</span> <span class="st">"Error"</span>}</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (numvar)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">choosenum</span> (<span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "GASP"  "PWGTP"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">choosenum</span> (<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Error"</code></pre>
+</div>
+</div>
+<p>It returns a string of two characters and takes both my input and another variant PWGTP. Now try “attaching” the new function with our main function getPUMS ()</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>getPUMSv2 <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>]),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>) </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble))</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2</span>(<span class="dv">2022</span>, <span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  V1    V2    V3   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 GASP  PWGTP SCHL 
+2 3     6     24   
+3 3     23    24   
+4 3     23    24   
+5 3     80    24   
+6 3     16    24   </code></pre>
+</div>
+</div>
+<p>What happens if I don’t choose any numeric values?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2</span>(<span class="dv">2022</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  V1    V2    V3   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 AGEP  PWGTP SCHL 
+2 88    6     24   
+3 84    23    24   
+4 57    23    24   
+5 37    80    24   
+6 82    16    24   </code></pre>
+</div>
+</div>
+<p>This is cool. This way ensures the numeric input must have a value. Now if you look closely at the objects returned by the getPUMSv2 function, these variables are all character variables. Make them numeric now!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>getPUMSv2<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, numvarinput) {  </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>]),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>) </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">mutate</span> (PUMScust_tibble, <span class="at">PWGTP_n =</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble))</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2.1</span>(<span class="dv">2022</span>, <span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Attempt to fix the error that might be due to missing values for PUMScust_tibble$PWGTP</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WT: Not yet fixed</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>getPUMSv2<span class="fl">.1</span>b <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>) {  </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">get =</span> <span class="fu">paste0</span>(<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>]),</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>) </span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PUMScust_parsed)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">mutate</span>(PUMScust_tibble, <span class="at">PWGTP_n =</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(PUMScust_tibble<span class="sc">$</span>PWGTP)))</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">head</span>(PUMScust_tibble))</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2.1b</span>(<span class="dv">2022</span>, <span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We fixed the issue of column names in the below updated function getPUMSv2.1c</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WT: issue related to mutate() is fixed. Column names are good. Function is getPUMSv2.1c</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>getPUMSv2<span class="fl">.1</span>c <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>){</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">get =</span> <span class="fu">paste0</span>(<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>]),</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>) </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PUMScust_parsed)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Address the error where the first row of PUMScust_tibble is mistakenly considered data, which should be the column names.</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Set first row as column names</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Function "unlist" turns the first row of data into a vector.</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the first row</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>,]</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="co"># convert column to appropriate data type (int)</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">type.convert</span>(PUMScust_tibble, <span class="at">as.is =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a><span class="co"># create a column with numeric value for PWGTP (double)</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">mutate</span> (PUMScust_tibble, <span class="at">PWGTP_n =</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">head</span>(PUMScust_tibble,<span class="dv">9</span>))</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2.1c</span>(<span class="dv">2022</span>, <span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+   GASP PWGTP  SCHL PWGTP_n
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+1     3     6    24       6
+2     3    23    24      23
+3     3    23    24      23
+4     3    80    24      80
+5     3    16    24      16
+6     3   107    24     107
+7     3    10    24      10
+8     3    22    24      22
+9     3   127    24     127</code></pre>
+</div>
+</div>
+<p>We noticed that there is a redundant column caused by mutate function, which we will drop later. Now go ahead to test other numeric variables to see if they work.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2.1c</span>(<span class="dv">2022</span>, <span class="st">"GRPIP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  GRPIP PWGTP  SCHL PWGTP_n
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+1     0     6    24       6
+2     0    23    24      23
+3     0    23    24      23
+4     0    80    24      80
+5     0    16    24      16
+6     0   107    24     107
+7     0    10    24      10
+8     0    22    24      22
+9     0   127    24     127</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2.1c</span>(<span class="dv">2022</span>, <span class="st">"JWAP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+   JWAP PWGTP  SCHL PWGTP_n
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+1     0     6    24       6
+2     0    23    24      23
+3    58    23    24      23
+4     0    80    24      80
+5     0    16    24      16
+6     0   107    24     107
+7     0    10    24      10
+8     0    22    24      22
+9   121   127    24     127</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2.1c</span>(<span class="dv">2022</span>, <span class="st">"JWDP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+   JWDP PWGTP  SCHL PWGTP_n
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+1     0     6    24       6
+2     0    23    24      23
+3    19    23    24      23
+4     0    80    24      80
+5     0    16    24      16
+6     0   107    24     107
+7     0    10    24      10
+8     0    22    24      22
+9    79   127    24     127</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv2.1c</span>(<span class="dv">2022</span>, <span class="st">"JWMNP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  JWMNP PWGTP  SCHL PWGTP_n
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+1     0     6    24       6
+2     0    23    24      23
+3     2    23    24      23
+4     0    80    24      80
+5     0    16    24      16
+6     0   107    24     107
+7     0    10    24      10
+8     0    22    24      22
+9    10   127    24     127</code></pre>
+</div>
+</div>
+<p>The problem is the time is changed into the correct format. Need to think of ways to decode the time code (see the last function getPUMSsum for a resolution)</p>
+<p>Now, move on to the next topic.</p>
+</section>
+<section id="make-a-function-that-specifies-the-categorical-variables-to-be-returned." class="level2">
+<h2 class="anchored" data-anchor-id="make-a-function-that-specifies-the-categorical-variables-to-be-returned.">Make a function that specifies the categorical variables to be returned.</h2>
+<p>Similarly, for categorical variables, we wanted to make a function that solely tells which character values to be returned. Default was SEX, with several options being available.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>choosecat <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">catvarinput=</span> <span class="st">"SEX"</span>) {</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (catvarinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"FER"</span>, <span class="st">"HHL"</span>, <span class="st">"HISPEED"</span>, <span class="st">"JWTRNS"</span>, <span class="st">"SCH"</span>, <span class="st">"SCHL"</span>, <span class="st">"SEX"</span>))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  {catvar <span class="ot">&lt;-</span> catvarinput}</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> {catvar <span class="ot">&lt;-</span> <span class="st">"Error"</span>}</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (catvar)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="fu">choosecat</span> (<span class="st">"FER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "FER"</code></pre>
+</div>
+</div>
+<p>The previous code did not the correct factor. WT: We updated the above code as follows. Function is choosecatv2</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WT: modified the above code to turn variable into levels, one categorical variable must be returned. Level and label information is from the variable website, link provided in the project instructions.</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>choosecatv2 <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">catvarinput =</span> <span class="st">"SEX"</span>){</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (catvarinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"FER"</span>, <span class="st">"HHL"</span>, <span class="st">"HISPEED"</span>, <span class="st">"JWTRNS"</span>, <span class="st">"SCH"</span>, <span class="st">"SCHL"</span>, <span class="st">"SEX"</span>)){</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    catvar <span class="ot">&lt;-</span> <span class="cf">switch</span>(catvarinput,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SEX"</span> <span class="ot">=</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>)),</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"FER"</span> <span class="ot">=</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Has given birth"</span>, <span class="st">"Has not given birth"</span>)),</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HHL"</span> <span class="ot">=</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>),</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"English only"</span>, <span class="st">"Spanish"</span>, <span class="st">"Other Indo-European languages"</span>, <span class="st">"Asian/Pacific Island languages"</span>, <span class="st">"Other language"</span>)),</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HISPEED"</span> <span class="ot">=</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Yes"</span>, <span class="st">"No"</span>)),</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"JWTRNS"</span> <span class="ot">=</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>), </span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>),</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Car, truck, or van"</span>, <span class="st">"Bus"</span>, <span class="st">"Subway or elevated rail"</span>, <span class="st">"Long-distance train or commuter rail"</span>, <span class="st">"Light rail, streetcar, or trolley"</span>, <span class="st">"Ferryboat"</span>, <span class="st">"Taxicab"</span>, <span class="st">"Motorcycle"</span>, <span class="st">"Bicycle"</span>, <span class="st">"Walked"</span>, <span class="st">"Worked from home"</span>, <span class="st">"Other method"</span>)),</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SCH"</span> <span class="ot">=</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No, has not attended in the last 3 months"</span>, <span class="st">"Yes, public school or public college"</span>, <span class="st">"Yes, private school or college or home school"</span>)),</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SCHL"</span> <span class="ot">=</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">13</span>, <span class="dv">14</span>, <span class="dv">15</span>, <span class="dv">16</span>, <span class="dv">17</span>, <span class="dv">18</span>, <span class="dv">19</span>, <span class="dv">20</span>, <span class="dv">21</span>, <span class="dv">22</span>, <span class="dv">23</span>, <span class="dv">24</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">13</span>, <span class="dv">14</span>, <span class="dv">15</span>, <span class="dv">16</span>, <span class="dv">17</span>, <span class="dv">18</span>, <span class="dv">19</span>, <span class="dv">20</span>, <span class="dv">21</span>, <span class="dv">22</span>, <span class="dv">23</span>, <span class="dv">24</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No schooling completed"</span>, <span class="st">"Nursery school, preschool"</span>, <span class="st">"Kindergarten"</span>, <span class="st">"Grade 1"</span>, <span class="st">"Grade 2"</span>, <span class="st">"Grade 3"</span>, <span class="st">"Grade 4"</span>, <span class="st">"Grade 5"</span>, <span class="st">"Grade 6"</span>, <span class="st">"Grade 7"</span>, <span class="st">"Grade 8"</span>, <span class="st">"Grade 9"</span>, <span class="st">"Grade 10"</span>, <span class="st">"Grade 11"</span>, <span class="st">"12th grade - no diploma"</span>, <span class="st">"Regular high school diploma"</span>, <span class="st">"GED or alternative credential"</span>, <span class="st">"Some college, but less than 1 year"</span>, <span class="st">"1 or more years of college credit, no degree"</span>, <span class="st">"Associate's degree"</span>, <span class="st">"Bachelor's degree"</span>, <span class="st">"Master's degree"</span>, <span class="st">"Professional degree beyond a bachelor's degree"</span>, <span class="st">"Doctorate degree"</span>))  </span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>     catvar <span class="ot">&lt;-</span> <span class="st">"Error: Invalid input variable"</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(catvar)</span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a><span class="co"># calling the following function will return the details for the categorical variable</span></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a><span class="fu">choosecatv2</span>(<span class="st">"HHL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] English only                   Spanish                       
+[3] Other Indo-European languages  Asian/Pacific Island languages
+[5] Other language                
+5 Levels: English only Spanish ... Other language</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">choosecatv2</span>(<span class="st">"SCHL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] No schooling completed                        
+ [2] Nursery school, preschool                     
+ [3] Kindergarten                                  
+ [4] Grade 1                                       
+ [5] Grade 2                                       
+ [6] Grade 3                                       
+ [7] Grade 4                                       
+ [8] Grade 5                                       
+ [9] Grade 6                                       
+[10] Grade 7                                       
+[11] Grade 8                                       
+[12] Grade 9                                       
+[13] Grade 10                                      
+[14] Grade 11                                      
+[15] 12th grade - no diploma                       
+[16] Regular high school diploma                   
+[17] GED or alternative credential                 
+[18] Some college, but less than 1 year            
+[19] 1 or more years of college credit, no degree  
+[20] Associate's degree                            
+[21] Bachelor's degree                             
+[22] Master's degree                               
+[23] Professional degree beyond a bachelor's degree
+[24] Doctorate degree                              
+24 Levels: No schooling completed Nursery school, preschool ... Doctorate degree</code></pre>
+</div>
+</div>
+<p>Now let’s concatenate this sub function into the original function and setting up the default categorical variable input as “SEX”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>getPUMSv3 <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>) {</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput)),</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble,<span class="dv">9</span>))</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  V1    V2    V3    V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 GASP  PWGTP HHL   SCHL 
+2 3     6     0     24   
+3 3     23    0     24   
+4 3     23    0     24   
+5 3     80    0     24   
+6 3     16    0     24   
+7 3     107   0     24   
+8 3     10    0     24   
+9 3     22    0     24   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3</span>(<span class="at">year=</span><span class="dv">2022</span>,<span class="at">numvarinput =</span> <span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  V1    V2    V3    V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 GASP  PWGTP SEX   SCHL 
+2 3     6     2     24   
+3 3     23    2     24   
+4 3     23    1     24   
+5 3     80    1     24   
+6 3     16    1     24   
+7 3     107   1     24   
+8 3     10    2     24   
+9 3     22    1     24   </code></pre>
+</div>
+</div>
+<p>We could try all the requested categorical variables to see if works.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"FER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  V1    V2    V3    V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 GASP  PWGTP FER   SCHL 
+2 3     6     0     24   
+3 3     23    0     24   
+4 3     23    0     24   
+5 3     80    0     24   
+6 3     16    0     24   
+7 3     107   0     24   
+8 3     10    2     24   
+9 3     22    0     24   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HISPEED"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  V1    V2    V3      V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;
+1 GASP  PWGTP HISPEED SCHL 
+2 3     6     0       24   
+3 3     23    0       24   
+4 3     23    0       24   
+5 3     80    0       24   
+6 3     16    0       24   
+7 3     107   0       24   
+8 3     10    0       24   
+9 3     22    0       24   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"JWTRNS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  V1    V2    V3     V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;
+1 GASP  PWGTP JWTRNS SCHL 
+2 3     6     0      24   
+3 3     23    0      24   
+4 3     23    10     24   
+5 3     80    0      24   
+6 3     16    0      24   
+7 3     107   0      24   
+8 3     10    0      24   
+9 3     22    0      24   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"SCH"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  V1    V2    V3    V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 GASP  PWGTP SCH   SCHL 
+2 3     6     1     24   
+3 3     23    1     24   
+4 3     23    1     24   
+5 3     80    1     24   
+6 3     16    1     24   
+7 3     107   1     24   
+8 3     10    1     24   
+9 3     22    1     24   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"SCHL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 4
+  V1    V2    V3    V4   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 GASP  PWGTP SCHL  SCHL 
+2 3     6     24    24   
+3 3     23    24    24   
+4 3     23    24    24   
+5 3     80    24    24   
+6 3     16    24    24   
+7 3     107   24    24   
+8 3     10    24    24   
+9 3     22    24    24   </code></pre>
+</div>
+</div>
+<p>Now except for the variables not being categorical but character, all other requirements are there.</p>
+<p>Update: We modified the above function as follows. Changed column vector to ‘factor’ type for categorical variables. Function is getPUMSv3b</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The function getPUMSv3 is modified as getPUMSv3b, as follows. Issues related to first row data and converting variable to categorical variable are addressed (SCHL = "24" was removed; did not see this requirement in the instructions. But then being added back - too long runtime)</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>getPUMSv3b <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>) {</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput)),</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">mutate</span>(PUMScust_tibble, <span class="at">PWGTP_n =</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># directly change the column vector to 'factor' type without adding a column to the dataset</span></span>
+<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosecat</span>(catvarinput) <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(.[[<span class="fu">choosecat</span>(catvarinput)]]))</span>
+<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>] <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(.[[<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>]]]))</span>
+<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span>(PUMScust_tibble))</span>
+<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv3b</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+   GASP PWGTP HHL   SCHL  PWGTP_n
+  &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt; &lt;chr&gt;   &lt;dbl&gt;
+1     3 6     0     24          6
+2     3 23    0     24         23
+3     3 23    0     24         23
+4     3 80    0     24         80
+5     3 16    0     24         16
+6     3 107   0     24        107</code></pre>
+</div>
+</div>
+</section>
+<section id="make-a-function-to-specify-the-geographical-level" class="level2">
+<h2 class="anchored" data-anchor-id="make-a-function-to-specify-the-geographical-level">Make a function to specify the geographical level</h2>
+<p>We are interested in getting data with specific geographic levels and wanted to also specify the geographic items we are interested in (a specific region, district or state(s)). Checking the examples provided by the US census on the example URLs (https://api.census.gov/data/2022/acs/acs1/pums/examples.html):</p>
+<p>Default call: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&amp;SCHL=24&amp;key=YOUR_KEY_GOES_HERE</p>
+<p>To get the region-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&amp;for=region:*&amp;SCHL=24&amp;key=YOUR_KEY_GOES_HERE.</p>
+<p>To get the division-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&amp;for=division:*&amp;SCHL=24&amp;key=YOUR_KEY_GOES_HERE</p>
+<p>To get the state-specific data: https://api.census.gov/data/2022/acs/acs1/pums?get=SEX,PWGTP,MAR&amp;for=state:*&amp;SCHL=24&amp;key=YOUR_KEY_GOES_HERE</p>
+<p>It is easy to see the parameter here need to deal with is “for=XXX”, which is included in the argument “query” in the function GET(). Thus we could let the new function specify this part. But after playing with it for a while we figured out in the query_params, geographic option should be included in the “get=” argument instead of “for=” argument because in R for is designated for the loop.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>getPUMSv4<span class="fl">.0</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>) {</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"REGION"</span>,<span class="st">","</span>,<span class="st">"ST"</span>,<span class="st">","</span>,<span class="st">"DIVISION"</span>),</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble))</span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.0</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  V1    V2    V3    V4     V5    V6       V7   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;
+1 GASP  PWGTP HHL   REGION ST    DIVISION SCHL 
+2 3     6     0     2      17    3        24   
+3 3     23    0     4      06    9        24   
+4 3     23    0     1      42    2        24   
+5 3     80    0     4      49    8        24   
+6 3     16    0     2      18    3        24   </code></pre>
+</div>
+</div>
+<p>We updated the above code as follows. Function getPUMSv4.0b</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WT: updates are mainly for address the data type converting</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>getPUMSv4<span class="fl">.0</span>b <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>) {</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"REGION"</span>,<span class="st">","</span>,<span class="st">"ST"</span>,<span class="st">","</span>,<span class="st">"DIVISION"</span>),</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this is to add a column and change the value type to numeric</span></span>
+<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">mutate</span>(PUMScust_tibble, <span class="at">PWGTP_n =</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb68-17"><a href="#cb68-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># directly change the column vector to 'factor' type without adding a column to the dataset</span></span>
+<span id="cb68-18"><a href="#cb68-18" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosecat</span>(catvarinput) <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(.[[<span class="fu">choosecat</span>(catvarinput)]]))</span>
+<span id="cb68-19"><a href="#cb68-19" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>] <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(.[[<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>]]]))</span>
+<span id="cb68-20"><a href="#cb68-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb68-21"><a href="#cb68-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span>(PUMScust_tibble))</span>
+<span id="cb68-22"><a href="#cb68-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb68-23"><a href="#cb68-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb68-24"><a href="#cb68-24" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.0b</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+   GASP PWGTP HHL   REGION ST    DIVISION SCHL  PWGTP_n
+  &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;
+1     3 6     0     2      17    3        24          6
+2     3 23    0     4      06    9        24         23
+3     3 23    0     1      42    2        24         23
+4     3 80    0     4      49    8        24         80
+5     3 16    0     2      18    3        24         16
+6     3 107   0     2      18    3        24        107</code></pre>
+</div>
+</div>
+<p>For the ease of exercising, I directly input the level of geography in the previous function. Now we want to build a function to let user select geographic level as well as specify the region, division or state. Let’s make a small function first.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>choosegeolvl <span class="ot">&lt;-</span> <span class="cf">function</span> (geolvlinput) {</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geolvlinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"REGION"</span>, <span class="st">"DIVISION"</span>,<span class="st">"ST"</span>,<span class="st">"all"</span>))</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  {geolvlvar <span class="ot">&lt;-</span> geolvlinput}</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> {geolvlvar <span class="ot">&lt;-</span> <span class="st">"Error"</span>}</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (geolvlvar)</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a><span class="fu">choosegeolvl</span> (<span class="st">"ST"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ST"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">choosegeolvl</span>(<span class="st">"DIVISION"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "DIVISION"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">choosegeolvl</span> (<span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "all"</code></pre>
+</div>
+</div>
+<p>Now that we have the function to specify geographic level we want to display, integrate in the main function. Note that the default was “of All”, which we interpret as all geographic levels.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>getPUMSv4<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>, geolvlinput) {</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geolvlinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"REGION"</span>, <span class="st">"DIVISION"</span>,<span class="st">"ST"</span>))</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"all"</span>)</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"REGION"</span>,<span class="st">","</span>,<span class="st">"ST"</span>,<span class="st">","</span>,<span class="st">"DIVISION"</span>),</span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble))</span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.1</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  V1    V2    V3    V4    V5   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1 GASP  PWGTP HHL   ST    SCHL 
+2 3     6     0     17    24   
+3 3     23    0     06    24   
+4 3     23    0     42    24   
+5 3     80    0     49    24   
+6 3     16    0     18    24   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.1</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  V1    V2    V3    V4     V5    V6       V7   
+  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;
+1 GASP  PWGTP HHL   REGION ST    DIVISION SCHL 
+2 3     6     0     2      17    3        24   
+3 3     23    0     4      06    9        24   
+4 3     23    0     1      42    2        24   
+5 3     80    0     4      49    8        24   
+6 3     16    0     2      18    3        24   </code></pre>
+</div>
+</div>
+<p>WT: Updated the above code as follows. Function “getPUMSv4.1b”</p>
+<p>SS: Changes including finalizing the tables and setting up a default output of all geographic level for this function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WT: updated the code to "getPUMSv4.1b", but we did not see "All" in the variable list, only "region", "ST", ...</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SS: Change the default input of geographic level into "state". Default = "all" is just asking to output all geolevel, but it is tricky to make this happen.</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>getPUMSv4<span class="fl">.1</span>b <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>, <span class="at">geolvlinput =</span> <span class="st">"all"</span>) {</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geolvlinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"REGION"</span>, <span class="st">"DIVISION"</span>,<span class="st">"ST"</span>))</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"all"</span>)</span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"REGION"</span>,<span class="st">","</span>,<span class="st">"ST"</span>,<span class="st">","</span>,<span class="st">"DIVISION"</span>),</span>
+<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb80-16"><a href="#cb80-16" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb80-17"><a href="#cb80-17" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb80-18"><a href="#cb80-18" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb80-19"><a href="#cb80-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb80-20"><a href="#cb80-20" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb80-21"><a href="#cb80-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this is to add a column and change the value type to numeric</span></span>
+<span id="cb80-22"><a href="#cb80-22" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">mutate</span>(PUMScust_tibble, <span class="at">PWGTP_n =</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb80-23"><a href="#cb80-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb80-24"><a href="#cb80-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># directly change the column vector to 'factor' type without adding a column to the dataset</span></span>
+<span id="cb80-25"><a href="#cb80-25" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosecat</span>(catvarinput) <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(.[[<span class="fu">choosecat</span>(catvarinput)]]))</span>
+<span id="cb80-26"><a href="#cb80-26" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>] <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(.[[<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>]]]))</span>
+<span id="cb80-27"><a href="#cb80-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb80-28"><a href="#cb80-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span>(PUMScust_tibble))</span>
+<span id="cb80-29"><a href="#cb80-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb80-30"><a href="#cb80-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb80-31"><a href="#cb80-31" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.1b</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>, <span class="st">"DIVISION"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+   GASP PWGTP HHL   DIVISION SCHL  PWGTP_n
+  &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;
+1     3 6     0     3        24          6
+2     3 23    0     9        24         23
+3     3 23    0     2        24         23
+4     3 80    0     8        24         80
+5     3 16    0     3        24         16
+6     3 107   0     3        24        107</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.1b</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>, <span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+   GASP PWGTP HHL   REGION ST    DIVISION SCHL  PWGTP_n
+  &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;
+1     3 6     0     2      17    3        24          6
+2     3 23    0     4      06    9        24         23
+3     3 23    0     1      42    2        24         23
+4     3 80    0     4      49    8        24         80
+5     3 16    0     2      18    3        24         16
+6     3 107   0     2      18    3        24        107</code></pre>
+</div>
+</div>
+<p>Now let’s enable an option to allow user to subset the data based on geographic information, and it must be on API. Considering the argument of query is essentially a list, which specifies “SCHL =”24”, we could try specify here as well.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>getPUMSv4<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>, <span class="at">geolvlinput =</span> <span class="st">"all"</span>, geospctinput) {</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"REGION"</span>)</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION =</span> <span class="fu">as.character</span> (geospctinput),</span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"DIVISION"</span>)</span>
+<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb84-11"><a href="#cb84-11" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb84-12"><a href="#cb84-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb84-13"><a href="#cb84-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb84-14"><a href="#cb84-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">DIVISION =</span> <span class="fu">as.character</span> (geospctinput),</span>
+<span id="cb84-15"><a href="#cb84-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb84-16"><a href="#cb84-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"ST"</span>)</span>
+<span id="cb84-17"><a href="#cb84-17" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb84-18"><a href="#cb84-18" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb84-19"><a href="#cb84-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb84-20"><a href="#cb84-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb84-21"><a href="#cb84-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ST =</span> <span class="fu">as.character</span> (geospctinput),</span>
+<span id="cb84-22"><a href="#cb84-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb84-23"><a href="#cb84-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"all"</span>)</span>
+<span id="cb84-24"><a href="#cb84-24" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb84-25"><a href="#cb84-25" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb84-26"><a href="#cb84-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"REGION"</span>,<span class="st">","</span>,<span class="st">"ST"</span>,<span class="st">","</span>,<span class="st">"DIVISION"</span>),</span>
+<span id="cb84-27"><a href="#cb84-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb84-28"><a href="#cb84-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb84-29"><a href="#cb84-29" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb84-30"><a href="#cb84-30" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb84-31"><a href="#cb84-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb84-32"><a href="#cb84-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">ST =</span> <span class="st">"09"</span>,</span>
+<span id="cb84-33"><a href="#cb84-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"23"</span>,</span>
+<span id="cb84-34"><a href="#cb84-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb84-35"><a href="#cb84-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb84-36"><a href="#cb84-36" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb84-37"><a href="#cb84-37" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb84-38"><a href="#cb84-38" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb84-39"><a href="#cb84-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb84-40"><a href="#cb84-40" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb84-41"><a href="#cb84-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this is to add a column and change the value type to numeric</span></span>
+<span id="cb84-42"><a href="#cb84-42" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">mutate</span>(PUMScust_tibble, <span class="at">PWGTP_n =</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb84-43"><a href="#cb84-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb84-44"><a href="#cb84-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># directly change the column vector to 'factor' type without adding a column to the dataset</span></span>
+<span id="cb84-45"><a href="#cb84-45" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosecat</span>(catvarinput) <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(.[[<span class="fu">choosecat</span>(catvarinput)]]))</span>
+<span id="cb84-46"><a href="#cb84-46" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>] <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(.[[<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>]]]))</span>
+<span id="cb84-47"><a href="#cb84-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble))</span>
+<span id="cb84-48"><a href="#cb84-48" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb84-49"><a href="#cb84-49" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.2</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"state"</span>,<span class="st">"09"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It throws out an error. Looks like geographic-related variables could not be subset in the same way as other variables. But how to solve the ‘for’ problem? We figured out later a backtick (`) should be used to avoid confusion.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># WT: updated the above function as follows.</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SS: 1. There is a special thing about the level "ST". as a variable it is called "ST", but in the "for" call it is called "state". It was a pity they were not the same.</span></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a><span class="co"># SS: 2. Modified the tibble coding part. Use |&gt; instead of %&gt;% and adding more string to keep the coding compact. Dropped the SCHL function that is previously encoded to speed up</span></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>getPUMSv4<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">year =</span> <span class="dv">2022</span>, </span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, </span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">catvarinput =</span> <span class="st">"SEX"</span>, </span>
+<span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">geolvlinput =</span> <span class="st">"all"</span>, </span>
+<span id="cb85-9"><a href="#cb85-9" aria-hidden="true" tabindex="-1"></a>                         geospecinput) {</span>
+<span id="cb85-10"><a href="#cb85-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-11"><a href="#cb85-11" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb85-12"><a href="#cb85-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb85-13"><a href="#cb85-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#If you requested to see such geographic level data, then need to get the geo data for the corresponding levels and also you could search specific code based on the requested geographic level.</span></span>
+<span id="cb85-14"><a href="#cb85-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (geolvlinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"REGION"</span>, <span class="st">"DIVISION"</span>))</span>
+<span id="cb85-15"><a href="#cb85-15" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb85-16"><a href="#cb85-16" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb85-17"><a href="#cb85-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb85-18"><a href="#cb85-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">for</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span> (geolvlinput,<span class="st">":"</span>,geospecinput),</span>
+<span id="cb85-19"><a href="#cb85-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb85-20"><a href="#cb85-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb85-21"><a href="#cb85-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb85-22"><a href="#cb85-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"ST"</span>)</span>
+<span id="cb85-23"><a href="#cb85-23" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb85-24"><a href="#cb85-24" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb85-25"><a href="#cb85-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"ST"</span>),</span>
+<span id="cb85-26"><a href="#cb85-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">for</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span> (<span class="st">"state"</span>,<span class="st">":"</span>,geospecinput),</span>
+<span id="cb85-27"><a href="#cb85-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb85-28"><a href="#cb85-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb85-29"><a href="#cb85-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb85-30"><a href="#cb85-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"all"</span>)</span>
+<span id="cb85-31"><a href="#cb85-31" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb85-32"><a href="#cb85-32" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb85-33"><a href="#cb85-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"REGION"</span>,<span class="st">","</span>,<span class="st">"ST"</span>,<span class="st">","</span>,<span class="st">"DIVISION"</span>),</span>
+<span id="cb85-34"><a href="#cb85-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb85-35"><a href="#cb85-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb85-36"><a href="#cb85-36" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb85-37"><a href="#cb85-37" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb85-38"><a href="#cb85-38" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb85-39"><a href="#cb85-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb85-40"><a href="#cb85-40" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb85-41"><a href="#cb85-41" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">PWGTP :=</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb85-42"><a href="#cb85-42" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosecat</span>(catvarinput) <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(.[[<span class="fu">choosecat</span>(catvarinput)]]))</span>
+<span id="cb85-43"><a href="#cb85-43" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>] <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(.[[<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>]]])) <span class="sc">|&gt;</span> <span class="fu">select</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb85-44"><a href="#cb85-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">head</span> (PUMScust_tibble))</span>
+<span id="cb85-45"><a href="#cb85-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb85-46"><a href="#cb85-46" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="st">"37"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+   GASP PWGTP HHL   ST   
+  &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt;
+1   100   107 1     37   
+2     3    81 1     37   
+3     3    62 1     37   
+4   130    51 1     37   
+5     3    63 4     37   
+6     3   153 1     37   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"DIVISION"</span>,<span class="st">"5"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+   GASP PWGTP HHL   DIVISION
+  &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt;   
+1    80    79 1     5       
+2    20    55 4     5       
+3     3   170 5     5       
+4     3    60 4     5       
+5     3   105 2     5       
+6    30    60 1     5       </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.3</span>(<span class="dv">2022</span>,<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"REGION"</span>,<span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+   GASP PWGTP HHL   REGION
+  &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; 
+1     3    23 0     1     
+2     3    20 0     1     
+3     3    24 0     1     
+4     3    98 0     1     
+5     3   101 0     1     
+6     3   114 0     1     </code></pre>
+</div>
+</div>
+</section>
+<section id="make-a-function-to-see-multiple-years-of-survey-data" class="level2">
+<h2 class="anchored" data-anchor-id="make-a-function-to-see-multiple-years-of-survey-data">Make a function to see multiple years of survey data</h2>
+<p>Now we modify the function so that we can pull multiple years of survey data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function: getPUMSv4.4</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>getPUMSv4<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">years =</span> <span class="fu">c</span>(<span class="dv">2022</span>), <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>, geolvlinput, geospecinput, <span class="at">filter_value =</span> <span class="cn">NULL</span>, <span class="at">filter_column =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create an empty list</span></span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>  multiple_years <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (year <span class="cf">in</span> years) {</span>
+<span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (geolvlinput <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"REGION"</span>, <span class="st">"DIVISION"</span>))</span>
+<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a>      {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>,<span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a>      query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">`</span><span class="at">for</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span> (geolvlinput,<span class="st">":"</span>,geospecinput),</span>
+<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"ST"</span>)</span>
+<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>,<span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"ST"</span>),</span>
+<span id="cb91-20"><a href="#cb91-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">for</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste0</span> (<span class="st">"state"</span>,<span class="st">":"</span>,geospecinput),</span>
+<span id="cb91-21"><a href="#cb91-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb91-22"><a href="#cb91-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)</span>
+<span id="cb91-23"><a href="#cb91-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb91-24"><a href="#cb91-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (geolvlinput <span class="sc">==</span> <span class="st">"all"</span>)</span>
+<span id="cb91-25"><a href="#cb91-25" aria-hidden="true" tabindex="-1"></a>  {base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb91-26"><a href="#cb91-26" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb91-27"><a href="#cb91-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="st">"REGION"</span>,<span class="st">","</span>,<span class="st">"ST"</span>,<span class="st">","</span>,<span class="st">"DIVISION"</span>),</span>
+<span id="cb91-28"><a href="#cb91-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">SCHL =</span> <span class="st">"24"</span>,</span>
+<span id="cb91-29"><a href="#cb91-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>)}</span>
+<span id="cb91-30"><a href="#cb91-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb91-31"><a href="#cb91-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># optional filtering</span></span>
+<span id="cb91-32"><a href="#cb91-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(filter_value) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(filter_column)) {</span>
+<span id="cb91-33"><a href="#cb91-33" aria-hidden="true" tabindex="-1"></a>    query_params[[filter_column]] <span class="ot">&lt;-</span> filter_value</span>
+<span id="cb91-34"><a href="#cb91-34" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb91-35"><a href="#cb91-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb91-36"><a href="#cb91-36" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb91-37"><a href="#cb91-37" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb91-38"><a href="#cb91-38" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb91-39"><a href="#cb91-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb91-40"><a href="#cb91-40" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb91-41"><a href="#cb91-41" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">PWGTP :=</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb91-42"><a href="#cb91-42" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosecat</span>(catvarinput) <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(.[[<span class="fu">choosecat</span>(catvarinput)]]))</span>
+<span id="cb91-43"><a href="#cb91-43" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>] <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(.[[<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>]]])) <span class="sc">|&gt;</span> <span class="fu">select</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span> (<span class="at">YEAR =</span> <span class="fu">as.character</span> (year))</span>
+<span id="cb91-44"><a href="#cb91-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">#SS: Added year as a variable so that we know which year the data comes from</span></span>
+<span id="cb91-45"><a href="#cb91-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb91-46"><a href="#cb91-46" aria-hidden="true" tabindex="-1"></a>  multiple_years[[<span class="fu">as.character</span>(year)]] <span class="ot">&lt;-</span> PUMScust_tibble</span>
+<span id="cb91-47"><a href="#cb91-47" aria-hidden="true" tabindex="-1"></a>  }  </span>
+<span id="cb91-48"><a href="#cb91-48" aria-hidden="true" tabindex="-1"></a>    allyeardata <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(multiple_years)</span>
+<span id="cb91-49"><a href="#cb91-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># we remove the 'head', so that the function returns a complete tibble dataset</span></span>
+<span id="cb91-50"><a href="#cb91-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(allyeardata)</span>
+<span id="cb91-51"><a href="#cb91-51" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb91-52"><a href="#cb91-52" aria-hidden="true" tabindex="-1"></a><span class="co"># following call works (takes long time)</span></span>
+<span id="cb91-53"><a href="#cb91-53" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSv4.4</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="st">"37"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,752 × 5
+    GASP PWGTP HHL   ST    YEAR 
+   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;
+ 1     3    34 0     37    2021 
+ 2     3    73 0     37    2021 
+ 3     3    79 0     37    2021 
+ 4     3    48 0     37    2021 
+ 5    30    83 1     37    2021 
+ 6    80    71 1     37    2021 
+ 7    20    89 1     37    2021 
+ 8    20    79 1     37    2021 
+ 9    40    54 1     37    2021 
+10    70   352 4     37    2021 
+# ℹ 2,742 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="writing-a-generic-function-for-summarizing." class="level1">
+<h1>Writing a generic function for Summarizing.</h1>
+<section id="first-steps" class="level2">
+<h2 class="anchored" data-anchor-id="first-steps">First steps</h2>
+<p>In the follwoing function “getPUMSsum”, we get the class ‘census’ assigned to tibble at the end, to get things ready for the next function ‘summary.census’. Tied up a couple of loose ends. We specify that state = “09” in the API query. According to the updated instructions, our group only works the subset data where ST = ‘09’ (Connecticut). We also included a column of ‘year’. Finally, we convert JWAP or JWDP to the minutes since midnight (column names are JWAP_since_midnight, JWDP_since_midnight, respective) with reasonable accuracy.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This function is updated to include 'census' class assigned to the tibble  </span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>getPUMSsum <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">years =</span> <span class="fu">c</span>(<span class="dv">2022</span>), <span class="at">numvarinput =</span> <span class="st">"AGEP"</span>, <span class="at">catvarinput =</span> <span class="st">"SEX"</span>, geolvlinput, <span class="at">filter_value =</span> <span class="cn">NULL</span>, <span class="at">filter_column =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create an empty list</span></span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>  multiple_years <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (year <span class="cf">in</span> years) {</span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>    base_url <span class="ot">&lt;-</span> <span class="fu">paste0</span> (<span class="st">"https://api.census.gov/data/"</span>, <span class="fu">as.character</span>(year), <span class="st">"/acs/acs1/pums"</span>)</span>
+<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a>    ST <span class="ot">=</span> <span class="st">"09"</span></span>
+<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a>    query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb93-11"><a href="#cb93-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">get =</span> <span class="fu">paste0</span> (<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>],<span class="st">","</span>,<span class="fu">choosenum</span>(numvarinput)[<span class="dv">2</span>],<span class="st">","</span>,<span class="fu">choosecat</span>(catvarinput),<span class="st">","</span>,<span class="fu">choosegeolvl</span>(geolvlinput)),</span>
+<span id="cb93-12"><a href="#cb93-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">for</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"state:09"</span>,  <span class="co"># add the state filter to the query, only pull ST = "09" data, Connecticut</span></span>
+<span id="cb93-13"><a href="#cb93-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> <span class="st">"41b1ae36641c0a01c8cf9a48396a6c82ab8f6d9c"</span>    )</span>
+<span id="cb93-14"><a href="#cb93-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># optional filtering</span></span>
+<span id="cb93-15"><a href="#cb93-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(filter_value) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(filter_column)) {</span>
+<span id="cb93-16"><a href="#cb93-16" aria-hidden="true" tabindex="-1"></a>    query_params[[filter_column]] <span class="ot">&lt;-</span> filter_value</span>
+<span id="cb93-17"><a href="#cb93-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb93-18"><a href="#cb93-18" aria-hidden="true" tabindex="-1"></a>  PUMScust <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="at">url =</span> base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb93-19"><a href="#cb93-19" aria-hidden="true" tabindex="-1"></a>  PUMScust_parsed <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(PUMScust<span class="sc">$</span>content))</span>
+<span id="cb93-20"><a href="#cb93-20" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> <span class="fu">as_tibble</span> (PUMScust_parsed)</span>
+<span id="cb93-21"><a href="#cb93-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(PUMScust_tibble) <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">unlist</span>(PUMScust_tibble[<span class="dv">1</span>,]))</span>
+<span id="cb93-22"><a href="#cb93-22" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb93-23"><a href="#cb93-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this is to add a column and change the value type to numeric</span></span>
+<span id="cb93-24"><a href="#cb93-24" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">PWGTP :=</span> <span class="fu">as.numeric</span>(PUMScust_tibble<span class="sc">$</span>PWGTP))</span>
+<span id="cb93-25"><a href="#cb93-25" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosecat</span>(catvarinput) <span class="sc">:</span><span class="er">=</span> <span class="fu">as.factor</span>(.[[<span class="fu">choosecat</span>(catvarinput)]]))</span>
+<span id="cb93-26"><a href="#cb93-26" aria-hidden="true" tabindex="-1"></a>  PUMScust_tibble <span class="ot">&lt;-</span> PUMScust_tibble <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>] <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(.[[<span class="fu">choosenum</span>(numvarinput)[<span class="dv">1</span>]]])) <span class="sc">|&gt;</span> <span class="fu">select</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span> (<span class="at">YEAR =</span> <span class="fu">as.character</span> (year))</span>
+<span id="cb93-27"><a href="#cb93-27" aria-hidden="true" tabindex="-1"></a>  multiple_years[[<span class="fu">as.character</span>(year)]] <span class="ot">&lt;-</span> PUMScust_tibble</span>
+<span id="cb93-28"><a href="#cb93-28" aria-hidden="true" tabindex="-1"></a>  }  </span>
+<span id="cb93-29"><a href="#cb93-29" aria-hidden="true" tabindex="-1"></a>  allyeardata <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(multiple_years)</span>
+<span id="cb93-30"><a href="#cb93-30" aria-hidden="true" tabindex="-1"></a>  current_classes <span class="ot">&lt;-</span> <span class="fu">class</span>(allyeardata)</span>
+<span id="cb93-31"><a href="#cb93-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">class</span>(allyeardata) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"census"</span>, current_classes)</span>
+<span id="cb93-32"><a href="#cb93-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb93-33"><a href="#cb93-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># to convert the JWDP and JWAP to the minutes since midnight, roughly</span></span>
+<span id="cb93-34"><a href="#cb93-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="st">"JWAP"</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(allyeardata)){</span>
+<span id="cb93-35"><a href="#cb93-35" aria-hidden="true" tabindex="-1"></a>    allyeardata <span class="ot">&lt;-</span> allyeardata <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">JWAP_since_midnight =</span> <span class="fu">ifelse</span>(JWAP <span class="sc">!=</span> <span class="dv">0</span>, <span class="dv">2</span><span class="sc">+</span>(JWAP<span class="dv">-1</span>)<span class="sc">*</span><span class="dv">5</span>, <span class="dv">0</span>))</span>
+<span id="cb93-36"><a href="#cb93-36" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb93-37"><a href="#cb93-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="st">"JWDP"</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(allyeardata)){</span>
+<span id="cb93-38"><a href="#cb93-38" aria-hidden="true" tabindex="-1"></a>    allyeardata <span class="ot">&lt;-</span> allyeardata <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">JWDP_since_midnight =</span> <span class="fu">ifelse</span>(JWDP <span class="sc">!=</span> <span class="dv">0</span>, <span class="dv">15</span><span class="sc">+</span><span class="dv">9</span><span class="sc">*</span>(JWDP<span class="dv">-1</span>), <span class="dv">0</span>))</span>
+<span id="cb93-39"><a href="#cb93-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb93-40"><a href="#cb93-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># we remove the 'head', so that the function returns a complete tibble dataset</span></span>
+<span id="cb93-41"><a href="#cb93-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(allyeardata)</span>
+<span id="cb93-42"><a href="#cb93-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb93-43"><a href="#cb93-43" aria-hidden="true" tabindex="-1"></a><span class="co"># following call works</span></span>
+<span id="cb93-44"><a href="#cb93-44" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,245 × 5
+    GASP PWGTP HHL   ST    YEAR 
+   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;
+ 1     3    52 0     09    2021 
+ 2     3     3 0     09    2021 
+ 3     3     5 0     09    2021 
+ 4     3    19 0     09    2021 
+ 5     3     3 0     09    2021 
+ 6     3    10 0     09    2021 
+ 7     3    91 0     09    2021 
+ 8     3     4 0     09    2021 
+ 9   180    66 5     09    2021 
+10     3   381 1     09    2021 
+# ℹ 1,235 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWAP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,245 × 6
+    JWAP PWGTP HHL   ST    YEAR  JWAP_since_midnight
+   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt;
+ 1    78   193 2     09    2021                  387
+ 2     0    51 3     09    2021                    0
+ 3   112   108 3     09    2021                  557
+ 4     0    82 3     09    2021                    0
+ 5   103    54 3     09    2021                  512
+ 6    76    60 1     09    2021                  377
+ 7     0    54 1     09    2021                    0
+ 8   122    52 1     09    2021                  607
+ 9     0    91 1     09    2021                    0
+10     0    58 1     09    2021                    0
+# ℹ 1,235 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWDP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,245 × 6
+    JWDP PWGTP HHL   ST    YEAR  JWDP_since_midnight
+   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt;
+ 1     0    52 0     09    2021                    0
+ 2     0     3 0     09    2021                    0
+ 3     0     5 0     09    2021                    0
+ 4     0    19 0     09    2021                    0
+ 5     0     3 0     09    2021                    0
+ 6     0    10 0     09    2021                    0
+ 7     0    91 0     09    2021                    0
+ 8     0     4 0     09    2021                    0
+ 9    47    66 5     09    2021                  429
+10    43   381 1     09    2021                  393
+# ℹ 1,235 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWMNP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,245 × 5
+   JWMNP PWGTP HHL   ST    YEAR 
+   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;chr&gt; &lt;chr&gt;
+ 1    40   193 2     09    2021 
+ 2     0    51 3     09    2021 
+ 3    60   108 3     09    2021 
+ 4     0    82 3     09    2021 
+ 5    15    54 3     09    2021 
+ 6    90    60 1     09    2021 
+ 7     0    54 1     09    2021 
+ 8    20    52 1     09    2021 
+ 9     0    91 1     09    2021 
+10     0    58 1     09    2021 
+# ℹ 1,235 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the data and give it a name, which will be the first argument in the Function "summary.census"</span></span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census1 <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GRPIP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census2 <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWAP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We developed a function “summary.census” below that produces means and standard deviations for numeric variables and counts for categorical variables SS: To reflect changes in eleminating unecessary columns, a few changes were made.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This function will use the output of getPUMSsum function as one of the argument, and summarize weighted mean, std. dev, and the count</span></span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>summary.census <span class="ot">&lt;-</span> <span class="cf">function</span>(tibble_data, <span class="at">num_vars=</span><span class="cn">NULL</span>, <span class="at">cat_vars=</span><span class="cn">NULL</span>) {</span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if numeric variable, then put it in a vector num_vars. We leave "PWGTP" out, it's the weighting info used in summary</span></span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(num_vars)){</span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>    num_vars <span class="ot">&lt;-</span> <span class="fu">names</span>(tibble_data)[<span class="fu">sapply</span>(tibble_data, is.numeric) <span class="sc">&amp;</span> <span class="fu">names</span>(tibble_data) <span class="sc">!=</span> <span class="st">"PWGTP"</span> ]</span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if categorical variable, then put it in a vector cat_vars</span></span>
+<span id="cb102-9"><a href="#cb102-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(cat_vars)){</span>
+<span id="cb102-10"><a href="#cb102-10" aria-hidden="true" tabindex="-1"></a>    cat_vars <span class="ot">&lt;-</span> <span class="fu">names</span>(tibble_data)[<span class="fu">sapply</span>(tibble_data, is.factor)]</span>
+<span id="cb102-11"><a href="#cb102-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb102-12"><a href="#cb102-12" aria-hidden="true" tabindex="-1"></a>    result_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb102-13"><a href="#cb102-13" aria-hidden="true" tabindex="-1"></a>  weight_vector <span class="ot">&lt;-</span> tibble_data<span class="sc">$</span>PWGTP</span>
+<span id="cb102-14"><a href="#cb102-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb102-15"><a href="#cb102-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (num_var <span class="cf">in</span> num_vars){</span>
+<span id="cb102-16"><a href="#cb102-16" aria-hidden="true" tabindex="-1"></a>    numeric_vector <span class="ot">&lt;-</span> tibble_data[[num_var]]</span>
+<span id="cb102-17"><a href="#cb102-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb102-18"><a href="#cb102-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate mean and standard deviation for numeric variables. If it is JWAP, JWDP, JWMNP, then we only include nonzero values because the individual does not travel to work (WFH, etc) if it is zero.  </span></span>
+<span id="cb102-19"><a href="#cb102-19" aria-hidden="true" tabindex="-1"></a>  sample_mean <span class="ot">&lt;-</span> <span class="cf">if</span>(num_var <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"JWAP"</span>, <span class="st">"JWDP"</span>, <span class="st">"JWMNP"</span>)){</span>
+<span id="cb102-20"><a href="#cb102-20" aria-hidden="true" tabindex="-1"></a>      valid_indices <span class="ot">&lt;-</span> numeric_vector <span class="sc">!=</span> <span class="dv">0</span></span>
+<span id="cb102-21"><a href="#cb102-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(numeric_vector[valid_indices] <span class="sc">*</span> weight_vector[valid_indices]) <span class="sc">/</span> <span class="fu">sum</span>(weight_vector[valid_indices])</span>
+<span id="cb102-22"><a href="#cb102-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb102-23"><a href="#cb102-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb102-24"><a href="#cb102-24" aria-hidden="true" tabindex="-1"></a>       <span class="fu">sum</span>(numeric_vector<span class="sc">*</span>weight_vector)<span class="sc">/</span><span class="fu">sum</span>(weight_vector)</span>
+<span id="cb102-25"><a href="#cb102-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb102-26"><a href="#cb102-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-27"><a href="#cb102-27" aria-hidden="true" tabindex="-1"></a>  sample_stddev <span class="ot">&lt;-</span> <span class="cf">if</span>(num_var <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"JWAP"</span>, <span class="st">"JWDP"</span>, <span class="st">"JWMNP"</span>)){</span>
+<span id="cb102-28"><a href="#cb102-28" aria-hidden="true" tabindex="-1"></a>      valid_indices <span class="ot">&lt;-</span> numeric_vector <span class="sc">!=</span> <span class="dv">0</span></span>
+<span id="cb102-29"><a href="#cb102-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sqrt</span>(<span class="fu">sum</span>(numeric_vector[valid_indices]<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>weight_vector[valid_indices])<span class="sc">/</span><span class="fu">sum</span>(weight_vector[valid_indices])<span class="sc">-</span>sample_mean<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb102-30"><a href="#cb102-30" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb102-31"><a href="#cb102-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb102-32"><a href="#cb102-32" aria-hidden="true" tabindex="-1"></a>       <span class="fu">sqrt</span>(<span class="fu">sum</span>(numeric_vector<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>weight_vector)<span class="sc">/</span><span class="fu">sum</span>(weight_vector)<span class="sc">-</span>sample_mean<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb102-33"><a href="#cb102-33" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb102-34"><a href="#cb102-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-35"><a href="#cb102-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate sample mean for numeric variable</span></span>
+<span id="cb102-36"><a href="#cb102-36" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  sample_mean &lt;- sum(numeric_vector*weight_vector)/sum(weight_vector)</span></span>
+<span id="cb102-37"><a href="#cb102-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate sample std dev for numeric variable</span></span>
+<span id="cb102-38"><a href="#cb102-38" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  sample_stddev &lt;- sqrt(sum(numeric_vector^2*weight_vector)/sum(weight_vector)-sample_mean^2)</span></span>
+<span id="cb102-39"><a href="#cb102-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb102-40"><a href="#cb102-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return the values as a named list</span></span>
+<span id="cb102-41"><a href="#cb102-41" aria-hidden="true" tabindex="-1"></a>  result_list[[<span class="fu">paste0</span>(num_var, <span class="st">"_mean"</span>)]] <span class="ot">&lt;-</span> sample_mean</span>
+<span id="cb102-42"><a href="#cb102-42" aria-hidden="true" tabindex="-1"></a>  result_list[[<span class="fu">paste0</span>(num_var, <span class="st">"_sd"</span>)]] <span class="ot">&lt;-</span> sample_stddev</span>
+<span id="cb102-43"><a href="#cb102-43" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb102-44"><a href="#cb102-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb102-45"><a href="#cb102-45" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (cat_var <span class="cf">in</span> cat_vars){</span>
+<span id="cb102-46"><a href="#cb102-46" aria-hidden="true" tabindex="-1"></a>    cat_table <span class="ot">&lt;-</span> <span class="fu">table</span>(tibble_data[[cat_var]])</span>
+<span id="cb102-47"><a href="#cb102-47" aria-hidden="true" tabindex="-1"></a>    result_list[[<span class="fu">paste0</span>(cat_var, <span class="st">"_counts"</span>)]] <span class="ot">&lt;-</span> cat_table</span>
+<span id="cb102-48"><a href="#cb102-48" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb102-49"><a href="#cb102-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result_list)</span>
+<span id="cb102-50"><a href="#cb102-50" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb102-51"><a href="#cb102-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-52"><a href="#cb102-52" aria-hidden="true" tabindex="-1"></a>summary_stat <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census)</span>
+<span id="cb102-53"><a href="#cb102-53" aria-hidden="true" tabindex="-1"></a>summary_stat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$GASP_mean
+[1] 90.97883
+
+$GASP_sd
+[1] 187.7397
+
+$HHL_counts
+
+  0   1   2   3   4   5 
+ 14 819  51 192 145  24 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>summary_stat2 <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census2)</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>summary_stat2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$JWAP_mean
+[1] 100.4298
+
+$JWAP_sd
+[1] 24.82448
+
+$JWAP_since_midnight_mean
+[1] 293.1109
+
+$JWAP_since_midnight_sd
+[1] 263.5128
+
+$HHL_counts
+
+  0   1   2   3   4   5 
+ 14 819  51 192 145  24 </code></pre>
+</div>
+</div>
+</section>
+<section id="plot-function" class="level2">
+<h2 class="anchored" data-anchor-id="plot-function">Plot function</h2>
+<p>Next, We create a generic plot() function for a census class tibble</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a><span class="co"># This code chunk creates a generic plot() function for a census class tibble, with three arguments. </span></span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.3.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>plot.census <span class="ot">&lt;-</span> <span class="cf">function</span>(tibble_data, cat_var, num_var){</span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>((tibble_data), </span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">get</span>(cat_var), </span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> <span class="fu">get</span>(num_var), </span>
+<span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">weight =</span> PWGTP)) <span class="sc">+</span></span>
+<span id="cb108-6"><a href="#cb108-6" aria-hidden="true" tabindex="-1"></a>                <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb108-7"><a href="#cb108-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Plot of"</span>, num_var, <span class="st">"by"</span>, cat_var)) <span class="sc">+</span></span>
+<span id="cb108-8"><a href="#cb108-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(cat_var) <span class="sc">+</span> </span>
+<span id="cb108-9"><a href="#cb108-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(num_var)</span>
+<span id="cb108-10"><a href="#cb108-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(plot)</span>
+<span id="cb108-11"><a href="#cb108-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb108-12"><a href="#cb108-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-13"><a href="#cb108-13" aria-hidden="true" tabindex="-1"></a><span class="co"># call the function and return a plot</span></span>
+<span id="cb108-14"><a href="#cb108-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census, <span class="st">"HHL"</span>, <span class="st">"GASP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Computation failed in `stat_boxplot()`.
+Caused by error in `loadNamespace()`:
+! namespace 'Matrix' 1.5-4.1 is already loaded, but &gt;= 1.6.0 is required</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-1_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census1, <span class="st">"HHL"</span>, <span class="st">"GRPIP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Computation failed in `stat_boxplot()`.
+Caused by error in `loadNamespace()`:
+! namespace 'Matrix' 1.5-4.1 is already loaded, but &gt;= 1.6.0 is required</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-1_files/figure-html/unnamed-chunk-31-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census2, <span class="st">"HHL"</span>, <span class="st">"JWAP_since_midnight"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Computation failed in `stat_boxplot()`.
+Caused by error in `loadNamespace()`:
+! namespace 'Matrix' 1.5-4.1 is already loaded, but &gt;= 1.6.0 is required</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Project-1_files/figure-html/unnamed-chunk-31-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interesting-topics-to-investigate-using-the-census-data-and-the-api-and-summary-functions." class="level2">
+<h2 class="anchored" data-anchor-id="interesting-topics-to-investigate-using-the-census-data-and-the-api-and-summary-functions.">Interesting topics to investigate using the census data and the API and summary functions.</h2>
+<p>Topic - How does gross rent as a % of household income vary among different language speaking families? (We were more interested in finding income distribution among different attributes. However, the GRPIP variable seems not working in API function. Will revisit) Update: Works like a charm!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GRPIP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census</span>
+<span id="cb114-3"><a href="#cb114-3" aria-hidden="true" tabindex="-1"></a><span class="co"># obtain the summary statistics</span></span>
+<span id="cb114-4"><a href="#cb114-4" aria-hidden="true" tabindex="-1"></a>summary_stat <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census)</span>
+<span id="cb114-5"><a href="#cb114-5" aria-hidden="true" tabindex="-1"></a>summary_stat</span>
+<span id="cb114-6"><a href="#cb114-6" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb114-7"><a href="#cb114-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.census</span>(PUMS_tibble_census, <span class="st">"HHL"</span>, <span class="st">"GRPIP"</span>)</span>
+<span id="cb114-8"><a href="#cb114-8" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWAP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="final-remarks." class="level2">
+<h2 class="anchored" data-anchor-id="final-remarks.">Final remarks.</h2>
+<p>After several trial and error in each step explained in the instructions, we were able to finalize a function “getPUMSsum” that does what are required in the project. To verify the functionality, the function was called with various combinations of options, and we were able to obtain the summary statistics and the plot from the data retrieved.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GASP"</span>,<span class="st">"HHL"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"GRPIP"</span>,<span class="st">"SCH"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>PUMS_tibble_census <span class="ot">&lt;-</span> <span class="fu">getPUMSsum</span>(<span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>,<span class="dv">2022</span>),<span class="st">"JWAP"</span>,<span class="st">"JWTRNS"</span>,<span class="st">"ST"</span>,<span class="at">filter_value=</span><span class="st">"24"</span>, <span class="at">filter_column =</span> <span class="st">"SCHL"</span> )</span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>summary_stat <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census)</span>
+<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a>summary_stat2 <span class="ot">&lt;-</span> <span class="fu">summary.census</span>(PUMS_tibble_census2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
